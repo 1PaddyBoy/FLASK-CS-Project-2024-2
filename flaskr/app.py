@@ -8,10 +8,11 @@ from itertools import count as crashB
 from spellchecker import SpellChecker
 #from cryptography.fernet import Fernet
 import datetime
+import json
 from flask import Flask, flash, redirect, render_template, request, session, abort
 
  
-
+popularityWhole = 0
 """similars = [["songs","music","tunes","song"],["movies","films","long form videos","motion picture"],["tv shows", "shows","television shows"], ["games", "video games"],]"""
 
 similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"]]
@@ -140,7 +141,7 @@ def individual():
 	catagory = z[0]
 	lines = z[1]
 	interest = z[2]
-
+	
 	hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
 	print("lines = " + str(lines))
 	if catagory == "crash":
@@ -151,7 +152,7 @@ def individual():
 			crash()
 	yinsert = isInsert(input("would you like your response to be recorded?"))
 	print("response recorded on =" + str(yinsert))
-	print(lines[0][0])
+	#print(lines[0][0])
 	print(lines)
 	dictable = True
 	for a in lines:
@@ -187,15 +188,21 @@ def individual():
 				print("D lines = " + str(Dlines))
 				file.close()
 				#file.truncate()
-				os.remove(hashcatagory+".csv")
-				#csv.writer(file).writerows(Dlines)
-				file = open(hashcatagory + ".csv","w")
-				for a in Dlines:
-					if a != []:
-						print("line to be printed" + str(a))
-						csv.writer(file).writerow([a,Dlines[a]])
-				print("should have rewriten")
-				file.close()
+				hashcatagory = hashlib.sha384(catagory.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+				newDlines = Dlines.items()
+				newDlines = [list(a) for a in newDlines]
+
+				if newDlines != []:
+					os.remove(hashcatagory+".csv")
+					#csv.writer(file).writerows(Dlines)
+					file = open(hashcatagory + ".csv","w")	
+					print("new Dlines = " + str(newDlines))
+					for a in Dlines:
+						if a != []:
+							print("line to be printed" + str(a))
+							csv.writer(file).writerow([a,Dlines[a]])
+					print("should have rewriten")
+					file.close()
 				
 			else:
 				print("wasn't there so didn't update")
@@ -207,7 +214,8 @@ def individual():
 		#file.close()
 		csv.writer(file).writerow([hashinterest,1])
 	
-	
+def addinfo(newDlines):
+	print("a")
 		
 def moreinfo(hashinterest, Dlines):
 	print("moreinfo, Dlines is " + str(Dlines))	
@@ -253,16 +261,16 @@ def hello():
 
 	
 def main():
-	app.run(host = '10.0.0.172', port=80,debug = True)
+	#app.run(host = '10.0.0.172', port=80,debug = True)
 	
 
 
-	"""print("welcome to the basic tester, there are two modes, individual interests and full percentage ")
+	print("welcome to the basic tester, there are two modes, individual interests and full percentage ")
 	mode = input("enter full to do full form, otherwise right no or anything else IDC").lower()
 	if mode == "full":
 		full()
 	else:
-		individual()"""
+		individual()
 
 
 @app.route('/', methods=['POST'])
@@ -272,6 +280,11 @@ def formpostre():
 	return render_template('entry.html',name="testername")
 
 
+#some day a seperate thread for this status would be nice. this is here made for a a seperate results page, idk if I will combine or not yet. 
+@app.route('/result', methods=['GET'])
+def getStatus():
+	statusList = {'status':status}
+	return json.dumps(statusList)
 
 
 

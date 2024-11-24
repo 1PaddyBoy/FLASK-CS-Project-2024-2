@@ -1,15 +1,42 @@
 <!doctype html>
+<html>
 <title>CS project 2024</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static' , filename= 'styles.css') }}">
+<body>
 <h1>Welcome to the CS interest board</h1>
-<div class ="row">
-	<div class="column" style = "width: 33.33%;"> <h3>left</h3> 
 
+<div class ="row">
+	<div class= "column" style = "width: 50%;">
+		<button class="collapsible">More information</button>
+		<div class="content">
+			<p>test,test,test</p>
+		</div>
+	</div>
+	
+	<div class= "column" style = "width: 50%;">
+		<button class="collapsible">How to opperate</button>
+		<div class="content">
+			<p>test,test,test</p>
+		</div>
+	</div>
+
+</div>
+
+<br>
+<br>
+
+<div class ="row">
+	<div class="column" style = "width: 33.33%;"> <h3>Interest Number</h3> 
+		<h2> 1.</h2>
+		<h2> 2.</h2>
+		<h2> 3.</h2>
+		<h2> 4.</h2>
+		<h2> 5.</h2>
 
 
 	</div>
 	<form method="POST">
-	<div class="column" style = "width: 33.33%;"> <h3>middle</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3>Catagory</h3> 
 
 		
     			<textarea name = "textareaa1"></textarea>
@@ -18,7 +45,7 @@
 		
 
 	</div>
-	<div class="column" style = "width: 33.33%;"> <h3>right</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3>Interest</h3> 
 		
 			
     			<textarea name = "textareaa2"></textarea>
@@ -34,3 +61,64 @@
 	</form>
 </div>
   
+<br>
+<div class="progress">
+    <div class="status">
+      <h2 id="innerStatus">Loading...</h2>
+    </div>
+</div>
+
+
+<script> // I kept the javascript to a minimum for many reasons but this was easiest sooo
+
+	var coll = document.getElementsByClassName("collapsible");
+	var i;
+	//make event listener for each
+	for (i = 0; i < coll.length; i++) {
+	  coll[i].addEventListener("click", function() {
+		
+		this.classList.toggle("active");
+		var content = this.nextElementSibling;
+		if (content.style.maxHeight){
+		  content.style.maxHeight = null;
+		} else {
+			//autosizing but 5 buffer, could make this equal for the two but predefintion probably then needed or whole dynamic system
+		  content.style.maxHeight = content.scrollHeight + 5 + "px";
+		} 
+		
+	  });
+	}
+
+	var timeout;
+
+	async function getStatus() {
+
+		let get;
+		
+		//try to get information from json
+		try {
+			const res = await fetch("/status");
+			get = await res.json();
+		} catch (e) {
+			console.error("Error: ", e);
+		}
+		
+		//element update
+		document.getElementById("innerStatus").innerHTML = get.status * 10 + "&percnt;";
+		
+		//max status
+		if (get.status == 10){
+			document.getElementById("innerStatus").innerHTML += " MAXIMUM BASIC";
+			clearTimeout(timeout);
+			return false;
+		}
+		
+		timeout = setTimeout(getStatus, 1000);
+	}
+
+	getStatus();
+</script>
+
+
+</body>
+</html>
