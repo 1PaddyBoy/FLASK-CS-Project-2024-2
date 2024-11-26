@@ -10,13 +10,18 @@ from spellchecker import SpellChecker
 import datetime
 import json
 from flask import Flask, flash, redirect, render_template, request, session, abort
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.fernet import Fernet
+import base64
 
- 
 popularityWhole = 0
 """similars = [["songs","music","tunes","song"],["movies","films","long form videos","motion picture"],["tv shows", "shows","television shows"], ["games", "video games"],]"""
 
+
+#this is similar catagories for grouping 
 similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"]]
 
+# input of multiple catagories and interests 
 def full():
 	print("full,\n nothing here dude")
 	print("in this you can enter alot of your favorite things and then it will calculate a ")
@@ -77,7 +82,7 @@ def full():
 		
 	
 	
-
+#crashes program
 def crash():
     playsound("Microsoft Windows XP Error - Sound Effect (HD) [ ezmp3.cc ].mp3")
     list(crashB(0))
@@ -91,7 +96,7 @@ def crash():
         crash()
 
 
-
+#asks individually for each interest and catagory, can be seperately spread out 
 def asks():
 	catagory = input("enter catagory").lower()
 	spell = SpellChecker()
@@ -109,7 +114,7 @@ def asks():
 	#print("hash 1 " + str(hashlib.sha384(str.encode(catagory)).hexdigest()) + " \n the second eariler method =" + str(hashlib.sha384(catagory.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()))
 	print("catagory chosen is " + str(catagory))
 	try:
-		file = open(hashcatagory + ".csv","r+")
+		file = open("static\\data\\" + hashcatagory + ".csv","r+")
 		lines = list(csv.reader(file,))
 		interest = input("interest b").lower()
 
@@ -120,7 +125,7 @@ def asks():
 
 	except:
 		try:
-			file = open(hashcatagory + ".csv","w")
+			file = open("static\\data\\" + hashcatagory + ".csv","w")
 		except:
 			print("file permissions lost, probably open somewhere else")
 		interest = input("interest a").lower()
@@ -132,7 +137,7 @@ def asks():
 		lines = ["nothing here"]
 	return [catagory,lines,interest,file]
 	
-
+#gives individual data for each catagory and interest
 def individual():
 	print("individual")
 
@@ -177,6 +182,14 @@ def individual():
 		print("amount of people with your interest are" + str(Dlines[hashinterest]))
 		moreinfo(hashinterest,Dlines)
 		print("percent that have your interest = " + str(int(Dlines[hashinterest])/total))
+		print("other recorded information:")
+		innie = list(Dlines.keys()).index(hashinterest)
+		if len(Twolines[innie]) > 2:
+			extra = Twolines[innie][2:]
+			print("encyrpted extra =" + str(extra))
+			print("unencyrpted extra =" + str(decrypt(extra,interest)))
+		else:
+			print("no extra information stored")
 
 		if yinsert:
 			
@@ -189,18 +202,23 @@ def individual():
 				file.close()
 				#file.truncate()
 				hashcatagory = hashlib.sha384(catagory.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
-				newDlines = Dlines.items()
-				newDlines = [list(a) for a in newDlines]
+				#newDlines = Dlines.items()
+				#newDlines = [list(a) for a in newDlines]
+				#scratch:
+				newDlines = Twolines
+				newDlines[innie][1] = int(newDlines[innie][1]) + 1
+				
+				newDlines = addinfo(newDlines,innie,interest) # this adds the information into the section
 
 				if newDlines != []:
-					os.remove(hashcatagory+".csv")
+					os.remove("static\\data\\" + hashcatagory+".csv")
 					#csv.writer(file).writerows(Dlines)
-					file = open(hashcatagory + ".csv","w")	
+					file = open("static\\data\\" + hashcatagory + ".csv","w")	
 					print("new Dlines = " + str(newDlines))
-					for a in Dlines:
+					for a in newDlines:
 						if a != []:
 							print("line to be printed" + str(a))
-							csv.writer(file).writerow([a,Dlines[a]])
+							csv.writer(file).writerow(a)
 					print("should have rewriten")
 					file.close()
 				
@@ -214,9 +232,79 @@ def individual():
 		#file.close()
 		csv.writer(file).writerow([hashinterest,1])
 	
-def addinfo(newDlines):
-	print("a")
+
+#decrypts symmetric infos stored seperately 
+def decrypt(infos, interest):
+	
+	"""if len(interest) > 64:
+		interest = interest[0:64]
+	else:
+		interest = interest + "".join(["x" for _ in range(64 - interest)])"""
+	#hashinterest = hashlib.sha256(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+
+	code_bytes = interest.encode("utf-8")
+	key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32])
+	print(len(key))
+	print(key)
+
+	"""encoded = hashinterest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')
+	key = encoded[0:2*(len(encoded)//3)]
+	iv = encoded[len(encoded)//3:]
+	cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+	
+	print("infos lens =" + str(len(infos)) + " and they are =" + str(infos))"""
+	decrypted = []
+	f = Fernet(key)
+	#ct = f.encrypt(message)
+
+	for a in infos:
+		#decryptor = cipher.decryptor()
+		decrypted.append(f.decrypt(a))
+	print("looped through all")
+	print("decryption done, data = " + str(decrypted))
+	return decrypted	
+
+#encrypts and adds data to the newDlines for then writing to the sheet.
+def addinfo(newDlines,innie, interest):
+	insert = isInsert(input("would you like to add any information for others to see?"))
+	if insert:
+		message = input("enter message to be encrypted")
+
+		#method for taking good numbers
+		"""if len(interest) > 48:
+			interest = interest[0:48]
+		else:
+			interest = interest + "".join(["x" for _ in range(48 - len(interest))])"""
 		
+
+		code_bytes = interest.encode("utf-8")
+		key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32])
+		print(len(key))
+		print(key)
+
+		"""encoded = hashinterest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')
+
+		encoded = interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')
+		key = encoded[0:2 * (len(encoded)//3)]
+		iv = encoded[len(encoded)//3:]
+
+		cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+		encryptor = cipher.encryptor()
+		ct = encryptor.update(message.encode(encoding = "UTF-8", errors='xmlcharrefreplace')) + encryptor.finalize()"""
+		f = Fernet(key)
+		ct = f.encrypt(message.encode(encoding = "UTF-8", errors='xmlcharrefreplace'))
+
+		#newDlines[innie].append(message) # unencrypted right now
+		newDlines[innie].append(str(ct)) # encrypted right now
+		print(newDlines[innie])
+		print("information added")
+	else:
+		print("information not added")
+
+	print("finished")
+	return newDlines
+	
+#this gives more info on statistics and otherwise of each interest 
 def moreinfo(hashinterest, Dlines):
 	print("moreinfo, Dlines is " + str(Dlines))	
 	total = 0
@@ -233,11 +321,12 @@ def moreinfo(hashinterest, Dlines):
 	return popularityPer
 	
 
-
+#any answer that means yes:
 yeses = list(map(lambda x: x.lower(), ["Yes", "Sure", "Absolutely", "Definitely", "Of course", "Certainly", "Indeed", "Affirmative", "For sure", "Without a doubt", "No doubt", "Sure thing", "You bet", "By all means", "Naturally", "Positively", "Undoubtedly", "Yep", "Yeah", "Yup", "Uh-huh", "Right", "Agreed", "Okay", "Alright", "Fine", "Sounds good", "I agree", "I do", "I will", "I can", "I am", "I have", "I did", "I shall", "I accept", "I consent", "I approve", "I confirm", "I acknowledge", "I concur", "I endorse", "I support", "I back", "I second", "I validate", "I verify", "I affirm", "I assent","Yes", "Yeah", "Yep", "Yup", "Sure", "Absolutely", "Definitely", "Of course", "Certainly", "Affirmative", "Indeed", "Naturally", "Sure thing", "You bet", "For sure", "Without a doubt", "Totally", "Alright", "Okay", "Ok", "Fine", "Agreed", "Roger", "Aye", "Uh-huh", "Yessir", "Yup yup", "Right on", "Surely", "By all means", "Indubitably", "Positively", "Unquestionably", "Undoubtedly", "I do", "I will", "I can", "I agree", "I accept", "I consent", "I approve", "I concur", "I understand", "I acknowledge", "I recognize", "I confirm", "I support", "I endorse", "I assent","y","Absolutely", "Affirmative", "All right", "Alrighty", "Amen", "Assuredly", "Aye aye", "Beyond a doubt", "By all means", "Can do", "Certainly", "Clearly", "Completely", "Correct", "Count on it", "Definitely", "Doubtless", "Easily", "Exactly", "Fine by me", "Gladly", "Good", "Got it", "Granted", "Happily", "I am", "I approve", "I believe so", "I can", "I do", "I got you", "I have", "I know", "I shall", "I suppose", "I think so", "I understand", "I will", "I would", "I'm in", "I'm on it", "I'm with you", "Indeed", "Indubitably", "Naturally", "No problem", "No question", "Of course", "Okay", "Okie dokie", "Positively", "Precisely", "Right", "Right away", "Righto", "Roger that", "Sure", "Sure thing", "Surely", "Totally", "True", "Uh-huh", "Undoubtedly", "Unquestionably", "Very well", "Willingly", "Without fail", "Without question", "Y", "Yas", "Yass", "Yasss", "Yea", "Yeah", "Yep", "Yes indeed", "Yes please", "Yes sir", "Yes ma'am", "Yes, I do", "Yes, I will", "Yes, of course", "Yes, please", "Yes, sure", "Yes, totally", "Yes, yes", "Yessir", "Yesss", "Yup", "Yup yup", "You bet", "You got it", "You know it", "You said it", "You’re right", "You’re on", "You’re correct", "You’re absolutely right", "You’re spot on", "You’re right on","Sí", "Oui", "Ja", "Sì", "Sim", "はい", "네", "是的", "Да", "نعم", "ใช่", "हाँ", "Evet", "Bəli", "Ano", "Jah", "Kyllä", "Ναι", "Igen", "Já", "Bai", "Haa", "Ndiyo", "Ewe", "Ee", "Da", "Iva", "Tak", "Vâng", "Áno", "Ja", "Ano", "Ja", "Jah", "Kyllä", "Oui", "Ja", "Ναι", "Igen", "Já", "Sì", "Ja", "Tak", "Sim", "Da", "Sí", "Ja", "Evet", "Так", "Vâng", "Bəli", "Bai", "Ano", "Ja", "Jah", "Kyllä", "Oui", "Ja", "Ναι", "Igen", "Já", "Sì", "Ja", "Tak", "Sim", "Da", "Sí", "Ja", "Evet", "Так", "Vâng"
 ]))
 #print(yeses)
 
+#if an answer is correct or yes or sometthing 
 def isInsert(inner):
 	inner = inner.lower() 
 	return inner in yeses
@@ -259,7 +348,7 @@ def hello():
 	#return "Hello World!"
 
 
-	
+#main and runs just normal without ui 
 def main():
 	#app.run(host = '10.0.0.172', port=80,debug = True)
 	
@@ -279,7 +368,7 @@ def formpostre():
 	print(text)
 	return render_template('entry.html',name="testername")
 
-
+#not really used right now 
 #some day a seperate thread for this status would be nice. this is here made for a a seperate results page, idk if I will combine or not yet. 
 @app.route('/result', methods=['GET'])
 def getStatus():
