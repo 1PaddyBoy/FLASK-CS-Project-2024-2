@@ -56,7 +56,7 @@ def full():
 				total += 0
 		print(total)
 		hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
-		if hashinterest in Dlines:
+		if hashinterest in Twolines:
 			print("amount of people with your interest are" + str(Dlines[hashinterest]))
 			popularity = moreinfo(hashinterest,Dlines) / len(Twolines)
 			print("popularity = " + str(popularity))
@@ -161,11 +161,12 @@ def individual():
 	print(lines)
 	dictable = True
 	for a in lines:
-		if len(a) != 2:
+		if len(a) < 2:
 			lines.pop(lines.index(a))	
 
 	Twolines = []
 	for a in lines:
+		print(a)
 		if len(a) >= 2:
 			Twolines.append(a[0:2])#new isolation piece
 	print("two lines = " + str(Twolines))
@@ -178,14 +179,15 @@ def individual():
 		except: 
 			total += 0
 	print(total)
-	if hashinterest in Dlines:
+	print(Dlines.keys())
+	if hashinterest in Dlines.keys():
 		print("amount of people with your interest are" + str(Dlines[hashinterest]))
 		moreinfo(hashinterest,Dlines)
 		print("percent that have your interest = " + str(int(Dlines[hashinterest])/total))
 		print("other recorded information:")
 		innie = list(Dlines.keys()).index(hashinterest)
-		if len(Twolines[innie]) > 2:
-			extra = Twolines[innie][2:]
+		if len(lines[innie]) > 2:
+			extra = lines[innie][2:]
 			print("encyrpted extra =" + str(extra))
 			print("unencyrpted extra =" + str(decrypt(extra,interest)))
 		else:
@@ -205,7 +207,7 @@ def individual():
 				#newDlines = Dlines.items()
 				#newDlines = [list(a) for a in newDlines]
 				#scratch:
-				newDlines = Twolines
+				newDlines = lines
 				newDlines[innie][1] = int(newDlines[innie][1]) + 1
 				
 				newDlines = addinfo(newDlines,innie,interest) # this adds the information into the section
@@ -256,10 +258,14 @@ def decrypt(infos, interest):
 	decrypted = []
 	f = Fernet(key)
 	#ct = f.encrypt(message)
-
+	print(f.decrypt(f.encrypt(b"a")))
 	for a in infos:
 		#decryptor = cipher.decryptor()
-		decrypted.append(f.decrypt(a))
+		print(a)
+		print(f.decrypt(str(a)[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace')))
+		decrypted.append(f.decrypt(str(a)[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace')))
+		print(a[2:len(a)-1])
+		#print("try basic =" + str(f.decrypt(a.encode(encoding = "UTF-8", errors='xmlcharrefreplace'))) + " try with removed = " + str(f.decrypt(a[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace'))))
 	print("looped through all")
 	print("decryption done, data = " + str(decrypted))
 	return decrypted	
