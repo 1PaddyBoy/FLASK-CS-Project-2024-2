@@ -18,7 +18,7 @@ import socket
 popularityWhole = 30
 """similars = [["songs","music","tunes","song"],["movies","films","long form videos","motion picture"],["tv shows", "shows","television shows"], ["games", "video games"],]"""
 
-
+combination = [[]]
 #this is similar catagories for grouping 
 similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"]]
 alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -440,6 +440,8 @@ def hello():
 					print(request.form.get('textarea' + str(alphabet[a]) + str(b + 1)))
 					text[a][b] = request.form.get('textarea' + str(alphabet[a]) + str(b + 1))
 			print(text)
+			combination.append(text)
+			print(combination)
 		elif 'results' in request.form:
 			#this does the results button
 			print("results")
@@ -453,7 +455,7 @@ def hello():
 @app.route("/results",methods=['GET','POST'])
 def results():
 	#RESULTS!!!!
-	return render_template("results.html",name="resultsname")
+	return render_template("results.html",name="resultsname", len = len(combination), combinations = combination)
 
 
 

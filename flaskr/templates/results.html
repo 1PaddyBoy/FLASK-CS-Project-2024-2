@@ -6,6 +6,14 @@
     <div class=page>
       <h1>RESULTS</h1>
       <h2>TBD</h2>
+
+      <ol>
+      {% for a in range(1, len)%}
+
+        <li>{{"favorite " + (combinations[a][0])|string + " is " + (combinations[a][1])|string }}</li>
+
+      {%endfor%}
+      <ol>
       <div class="progress" id = "progressslider">
         <div class="status" >
           <h2 id="innerStatus">Loading...</h2>
