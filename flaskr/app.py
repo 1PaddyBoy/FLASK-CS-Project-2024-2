@@ -9,23 +9,34 @@ from spellchecker import SpellChecker
 #from cryptography.fernet import Fernet
 import datetime
 import json
-from flask import Flask, flash, redirect, render_template, request, session, abort
+from flask import Flask, flash, redirect, render_template, request, session, abort, send_from_directory, current_app
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.fernet import Fernet
 import base64
+import socket
 
-popularityWhole = 0
+popularityWhole = 4
 """similars = [["songs","music","tunes","song"],["movies","films","long form videos","motion picture"],["tv shows", "shows","television shows"], ["games", "video games"],]"""
 
 
 #this is similar catagories for grouping 
 similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"]]
-
+alphabet = "abcdefghijklmnopqrstuvwxyz"
 # input of multiple catagories and interests 
 def full():
 	print("full,\n nothing here dude")
 	print("in this you can enter alot of your favorite things and then it will calculate a ")
 	
+	output = looptake()
+	using = output[0]
+	counter = output[1]
+
+	
+	outputfile = open("output.txt", 'w')
+	outputfile.write("result of full test " + str(datetime.datetime.now()) + " \n Interest popularity percent =" + str((using / counter)*100) + "%" + " \n total amount of answers given: " + str(counter) + " \n Thanks for testing with us today")
+	print("output file written")
+		
+def looptake():
 	counter = 0 
 	using = 0
 	end = False
@@ -36,6 +47,18 @@ def full():
 		lines = z[1]
 		interest = z[2]
 		
+		output = processes(lines,interest,file,)
+		using += output[0]
+		counter += output[1]	
+
+
+		
+		end = isInsert(input("more or stop? type yes for end"))
+	print("using = " + str(using) + " counter = " + str(counter))
+	print("popularity percent = " + str((using / counter)*100) + "%")
+	return [using, counter]
+
+def processes(lines,interest,file,): 
 		dictable = True
 		for a in lines:
 			if len(a) != 2:
@@ -69,18 +92,56 @@ def full():
 			csv.writer(file).writerow([hashinterest,1])
 			using += 0
 			counter += 1
+		return [using,counter]
 
+#this loops on an existing list of catagories and interests gathering information 
+def loopinterest(combination):
+	interests = []
+	catagories = []
+	for a in combination: #delinates double list from website 
+		catagories.append(a[0])
+		interests.append(a[1])
+
+	extraInformation = []
+	counter = 0 
+	using = 0
+	for a in range(len(catagories)):
+		catagory = catagories[a]
+		interest = interests[a]
+		z = asksfileProcessing(catagory,interest)
 
 		
-		end = isInsert(input("more or stop? type yes for end"))
-	print("using = " + str(using) + " counter = " + str(counter))
-	print("popularity percent = " + str((using / counter)*100) + "%")
-	
-	outputfile = open("output.txt", 'w')
-	outputfile.write("result of full test " + str(datetime.datetime.now()) + " \n Interest popularity percent =" + str((using / counter)*100) + "%" + " \n total amount of answers given: " + str(counter) + " \n Thanks for testing with us today")
-	print("output file written")
-		
-	
+		file = z[3]
+		catagory = z[0]
+		lines = z[1]
+		interest = z[2]
+
+		hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+
+		Twolines = []
+		for a in lines:
+			print(a)
+			if len(a) >= 2:
+				Twolines.append(a[0:2])#new isolation piece
+		print("two lines = " + str(Twolines))
+		Dlines = dict(Twolines) #Dlines and Twolines like this only takes the info about the numbers and other stuff into a dictionary 
+
+		innie = list(Dlines.keys()).index(hashinterest)
+		if len(lines[innie]) > 2:
+			extra = lines[innie][2:]
+			print("encyrpted extra =" + str(extra))
+			print("unencyrpted extra =" + str(decrypt(extra,interest)))
+		else:
+			print("no extra information stored")
+		extraInformation.append(str(decrypt(extra,interest)))
+
+		output = processes(lines,interest,file,)
+		using += output[0]
+		counter += output[1]
+	return [using,counter,extraInformation, interests]
+
+
+
 	
 #crashes program
 def crash():
@@ -109,6 +170,12 @@ def asks():
 		if catagory in a:
 			catagory = a[0]
 			break
+	interest = input("interest b").lower()
+	return asksfileProcessing(catagory, interest)
+
+
+#this does all the file processing and ecetera 
+def asksfileProcessing(catagory, interesta):
 	print("catagory =" + str(catagory))
 	hashcatagory = hashlib.sha384(catagory.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
 	#print("hash 1 " + str(hashlib.sha384(str.encode(catagory)).hexdigest()) + " \n the second eariler method =" + str(hashlib.sha384(catagory.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()))
@@ -116,7 +183,7 @@ def asks():
 	try:
 		file = open("static\\data\\" + hashcatagory + ".csv","r+")
 		lines = list(csv.reader(file,))
-		interest = input("interest b").lower()
+		interest = interesta
 
 		"""misspelled  = spell.unknown([interest])
 		if len(mispelled) > 0:
@@ -128,7 +195,7 @@ def asks():
 			file = open("static\\data\\" + hashcatagory + ".csv","w")
 		except:
 			print("file permissions lost, probably open somewhere else")
-		interest = input("interest a").lower()
+		interest = interesta
 		
 		"""misspelled  = spell.unknown([interest])
 		if len(mispelled) > 0:
@@ -136,7 +203,8 @@ def asks():
 
 		lines = ["nothing here"]
 	return [catagory,lines,interest,file]
-	
+
+
 #gives individual data for each catagory and interest
 def individual():
 	print("individual")
@@ -170,7 +238,7 @@ def individual():
 		if len(a) >= 2:
 			Twolines.append(a[0:2])#new isolation piece
 	print("two lines = " + str(Twolines))
-	Dlines = dict(Twolines)
+	Dlines = dict(Twolines) #Dlines and Twolines like this only takes the info about the numbers and other stuff into a dictionary 
 
 	total = 0
 	for a in Dlines.values():
@@ -193,7 +261,7 @@ def individual():
 		else:
 			print("no extra information stored")
 
-		if yinsert:
+		if yinsert:# this goes into if they want to add to it. you need to record your answer if you are going to add information
 			
 			if hashinterest in Dlines:
 				Dlines[hashinterest] = int(Dlines[hashinterest])
@@ -245,7 +313,7 @@ def decrypt(infos, interest):
 	#hashinterest = hashlib.sha256(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
 
 	code_bytes = interest.encode("utf-8")
-	key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32])
+	key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32]) # properly encodes and lengthens or shortenes the input string to be used as a key 
 	print(len(key))
 	print(key)
 
@@ -256,24 +324,32 @@ def decrypt(infos, interest):
 	
 	print("infos lens =" + str(len(infos)) + " and they are =" + str(infos))"""
 	decrypted = []
-	f = Fernet(key)
+	f = Fernet(key) #encodes with fernet library, its great just takes 1 key 
 	#ct = f.encrypt(message)
 	print(f.decrypt(f.encrypt(b"a")))
 	for a in infos:
 		#decryptor = cipher.decryptor()
 		print(a)
 		print(f.decrypt(str(a)[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace')))
-		decrypted.append(f.decrypt(str(a)[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace')))
+		decrypted.append(f.decrypt(str(a)[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace'))) # appends encyrpted and encoded piece. 
 		print(a[2:len(a)-1])
 		#print("try basic =" + str(f.decrypt(a.encode(encoding = "UTF-8", errors='xmlcharrefreplace'))) + " try with removed = " + str(f.decrypt(a[2:len(a)-1].encode(encoding = "UTF-8", errors='xmlcharrefreplace'))))
 	print("looped through all")
 	print("decryption done, data = " + str(decrypted))
 	return decrypted	
 
-#encrypts and adds data to the newDlines for then writing to the sheet.
+#asks about adding information to the sheet
 def addinfo(newDlines,innie, interest):
 	insert = isInsert(input("would you like to add any information for others to see?"))
 	if insert:
+		return addencryptinfos(newDlines,innie,interest)	
+	else:
+		print("information not added")
+		return newDlines
+	#print("finished")
+	
+	
+def addencryptinfos(newDlines,innie,interest):
 		message = input("enter message to be encrypted")
 
 		#method for taking good numbers
@@ -304,12 +380,9 @@ def addinfo(newDlines,innie, interest):
 		newDlines[innie].append(str(ct)) # encrypted right now
 		print(newDlines[innie])
 		print("information added")
-	else:
-		print("information not added")
+		return newDlines
 
-	print("finished")
-	return newDlines
-	
+
 #this gives more info on statistics and otherwise of each interest 
 def moreinfo(hashinterest, Dlines):
 	print("moreinfo, Dlines is " + str(Dlines))	
@@ -336,23 +409,54 @@ yeses = list(map(lambda x: x.lower(), ["Yes", "Sure", "Absolutely", "Definitely"
 def isInsert(inner):
 	inner = inner.lower() 
 	return inner in yeses
+ 
+#does not work right now but attempts to download a file, just a test but can be utilized to download the extra information each person adds. 
+def download():
+	name = socket.gethostname() + " " + socket.gethostbyname(socket.gethostname())
+	print(" download started for " + name)
+	hashedname = hashlib.sha384(name.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+	
+	file = open("static\\UPLOAD_FOLDER\\" + str(hashedname) + ".txt", "w")
+	file.write(" file to be downloaded" + str(hashedname))
+	file.close()
+	print(current_app.root_path)
+	#uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+	#return send_from_directory(uploads, hashedname)
+	return send_from_directory(app.static_folder, hashedname, as_attachment=True)
 
 
-alphabet = "abcdefghijklmnopqrstuvwxyz"
-app = Flask(__name__)
+#main routing for main page, controls the textboxes and submit button as well. 
+app = Flask(__name__, static_folder='static')
 @app.route("/", methods=['GET','POST'])
 def hello():
 	if request.method == 'POST':
-		text = [['' for _ in range(2)] for _ in range(2)]
-		for a in range(len(text)):
-			for b in range(len(text[a])):
-				print('textarea' + str(alphabet[a]) + str(b + 1))
-				print(request.form.get('textarea' + str(alphabet[a]) + str(b + 1)))
-				text[a][b] = request.form.get('textarea' + str(alphabet[a]) + str(b + 1))
-		print(text)
+		#download()
+		if 'submit' in request.form:
+			text = [['' for _ in range(2)] for _ in range(2)]
+			for a in range(len(text)):
+				for b in range(len(text[a])):
+					print('textarea' + str(alphabet[a]) + str(b + 1))
+					print(request.form.get('textarea' + str(alphabet[a]) + str(b + 1)))
+					text[a][b] = request.form.get('textarea' + str(alphabet[a]) + str(b + 1))
+			print(text)
+		elif 'results' in request.form:
+			#this does the results button
+			print("results")
+			return redirect("/results")
+
+		else:
+			print("bad input in html submit post \\, will pretend like nothing happened")
 	return render_template('entry.html',name="testername")	
 	#return "Hello World!"
 
+@app.route("/results",methods=['GET','POST'])
+def results():
+	#RESULTS!!!!
+
+	statusList = {'status':popularityWhole}
+	json.dumps(statusList)
+
+	return render_template("results.html",name="resultsname")
 
 #main and runs just normal without ui 
 def main():
@@ -367,7 +471,7 @@ def main():
 	else:
 		individual()
 
-
+#does not do anything right now.
 @app.route('/', methods=['POST'])
 def formpostre():
 	text = request.form['text']
@@ -378,7 +482,7 @@ def formpostre():
 #some day a seperate thread for this status would be nice. this is here made for a a seperate results page, idk if I will combine or not yet. 
 @app.route('/result', methods=['GET'])
 def getStatus():
-	statusList = {'status':status}
+	statusList = {'status':popularityWhole}
 	return json.dumps(statusList)
 
 
