@@ -6,11 +6,13 @@
     <div class=page>
       <h1>RESULTS</h1>
       <h2>TBD</h2>
-      <div class="progress">
-        <div class="status">
+      <div class="progress" id = "progressslider">
+        <div class="status" >
           <h2 id="innerStatus">Loading...</h2>
         </div>
-    </div>
+      </div>
+      <br>
+      <br>
       
     </div>
 
@@ -19,15 +21,15 @@
         let get;
         //try to get information from json
         try {
-          const res = await fetch("/status");
+          const res = await fetch("/results/status");
           get = await res.json();
         } catch (e) {
           console.error("Error: ", e);
         }
 
         //element update
-        document.getElementById("innerStatus").innerHTML = get.status * 10 + "&percnt;";
-
+        document.getElementById("innerStatus").innerHTML = get.status * 1 + "&percnt;";
+        document.getElementById("progressslider").style.width = get.status * 1 + "&percnt;";
         //max status
         if (get.status == 10){
           document.getElementById("innerStatus").innerHTML += " MAXIMUM BASIC";
@@ -37,6 +39,7 @@
 
         timeout = setTimeout(getStatus, 1000);
       }
+      getStatus()
     </script>
   </body>
 </html>

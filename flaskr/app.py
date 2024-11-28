@@ -15,7 +15,7 @@ from cryptography.fernet import Fernet
 import base64
 import socket
 
-popularityWhole = 4
+popularityWhole = 30
 """similars = [["songs","music","tunes","song"],["movies","films","long form videos","motion picture"],["tv shows", "shows","television shows"], ["games", "video games"],]"""
 
 
@@ -432,7 +432,8 @@ def hello():
 	if request.method == 'POST':
 		#download()
 		if 'submit' in request.form:
-			text = [['' for _ in range(2)] for _ in range(2)]
+			pos = [2,5] # change these variables to change how many boxes it checks 
+			text = [['' for _ in range(pos[0])] for _ in range(pos[1])] 
 			for a in range(len(text)):
 				for b in range(len(text[a])):
 					print('textarea' + str(alphabet[a]) + str(b + 1))
@@ -452,11 +453,16 @@ def hello():
 @app.route("/results",methods=['GET','POST'])
 def results():
 	#RESULTS!!!!
-
-	statusList = {'status':popularityWhole}
-	json.dumps(statusList)
-
 	return render_template("results.html",name="resultsname")
+
+
+
+@app.route("/results/status", methods=['GET','POST'])
+def resultsstatus():
+	#print("attempted from results status ")
+	statusList = {'status':popularityWhole}
+	#print(statusList)
+	return json.dumps(statusList)
 
 #main and runs just normal without ui 
 def main():
@@ -482,6 +488,7 @@ def formpostre():
 #some day a seperate thread for this status would be nice. this is here made for a a seperate results page, idk if I will combine or not yet. 
 @app.route('/result', methods=['GET'])
 def getStatus():
+	print("running for some reason")
 	statusList = {'status':popularityWhole}
 	return json.dumps(statusList)
 
