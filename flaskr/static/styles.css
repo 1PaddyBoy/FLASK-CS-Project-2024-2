@@ -163,4 +163,37 @@ transform: rotate(315deg);
 
 .so-tab input[type=radio]:checked + label::after {
   transform: rotateX(180deg);
+} 
+ 
+.box {
+  border: solid;
+  border-color:red;
+  background-color:white;
+  color:blue;
+  padding: 5%;
+  /*width:200px;*/
+  height:50px;
+  overflow:scroll;
+
+}
+
+::-webkit-scrollbar{
+  width:12px;
+  height:12px;
+}
+
+::-webkit-scrollbar-track{
+  
+  border-radius:5px;
+  border: 1px solid blue;
+}
+
+::-webkit-scrollbar-thumb{
+  background:blue;
+  border-radius:5px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  width:105%;
+  background:lightblue;  
 }

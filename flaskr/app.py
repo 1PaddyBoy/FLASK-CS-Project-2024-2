@@ -18,7 +18,7 @@ import socket
 popularityWhole = 30
 """similars = [["songs","music","tunes","song"],["movies","films","long form videos","motion picture"],["tv shows", "shows","television shows"], ["games", "video games"],]"""
 
-combination = [[]]
+combination = []
 #this is similar catagories for grouping 
 similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"]]
 alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -425,6 +425,7 @@ def download():
 	return send_from_directory(app.static_folder, hashedname, as_attachment=True)
 
 
+extra=[]
 #main routing for main page, controls the textboxes and submit button as well. 
 app = Flask(__name__, static_folder='static')
 @app.route("/", methods=['GET','POST'])
@@ -440,7 +441,16 @@ def hello():
 					print(request.form.get('textarea' + str(alphabet[a]) + str(b + 1)))
 					text[a][b] = request.form.get('textarea' + str(alphabet[a]) + str(b + 1))
 			print(text)
-			combination.append(text)
+			removers = []
+			for a in text:
+				if len(a) < 2 or (a[0] == '') or (a[1] == ''):
+					print("popping, index = " + str(text.index(a)) + " value was "+ str(a) + " reason " + str([len(a) < 2,(a[0] == ''),a[1] == ''])) 
+					removers.append(a)
+			text = remove(text,removers)
+			
+			print("new combinations to be added =" + str(text))
+			combination.extend(text)
+			extra.append("test " + str(text) + "endtest                                          test test test test test test test test test test test test test test test")
 			print(combination)
 		elif 'results' in request.form:
 			#this does the results button
@@ -452,10 +462,27 @@ def hello():
 	return render_template('entry.html',name="testername")	
 	#return "Hello World!"
 
+
+#doesn't check just removes all removers from before
+def remove(before,removers):
+	#adjust = 0
+	for a in removers:
+		before.pop(before.index(a))
+		#adjust += 1
+	return before
+
 @app.route("/results",methods=['GET','POST'])
 def results():
 	#RESULTS!!!!
-	return render_template("results.html",name="resultsname", len = len(combination), combinations = combination)
+	interestsa = []
+	catagoriesa = []
+	
+	for a in combination: #delinates double list from website 
+		catagoriesa.append(a[0])
+		interestsa.append(a[1])
+	print("len = " + str(len(combination)))
+	print("interests = " + str(interestsa))
+	return render_template("results.html",name="resultsname", len = len(combination), combinations = combination, interests = interestsa, catagories = catagoriesa,extraa = extra)
 
 
 
