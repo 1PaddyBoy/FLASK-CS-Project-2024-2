@@ -13,8 +13,11 @@
           <ol>
             {% for a in range(0, len)%}
               <li>{{"favorite " + (catagories[a])|string + " is " + (interests[a])|string }}</li>
+              
+              <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} </p>
+              
             {%endfor%}
-            <ol>    
+          </ol>    
       
     
         </div>
@@ -35,6 +38,7 @@
     <br>
     <br>
     
+    <h2>originality</h2>
     <div class="progress" >
       <div class="status" id = "progressslider" >
         <h2 id="innerStatus">Loading...</h2>
@@ -44,6 +48,7 @@
     <br>
 
     <script>
+      var i = 0;
       async function getStatus() {
         let get;
         //try to get information from json
@@ -54,14 +59,30 @@
           console.error("Error: ", e);
         }
 
+        i = 1;
+        var id = setInterval(frame, 10);
         //element update
         var statusbar = get.status;
-        document.getElementById("innerStatus").innerHTML = statusbar * 1 + "&percnt;";
-        document.getElementById("progressslider").style.width = statusbar * 1 + "%";
+        document.getElementById("innerStatus").innerHTML = 1 * 1 + "&percnt;";
+
+        widthmax = statusbar * 1;
+        document.getElementById("progressslider").style.width = 1 + "%";
+        width = 1;
         //$(".status").css({width: "100%",color: "blue"});
         //max status
-        if (get.status == 10){
-          document.getElementById("innerStatus").innerHTML += " MAXIMUM BASIC";
+        var id = setInterval(frame,15)
+        function frame(){
+          if(width < widthmax){
+            width++;
+            document.getElementById("progressslider").style.width = width + "%";
+            document.getElementById("innerStatus").innerHTML = width * 1 + "&percnt;";
+
+          }else{
+            clearInterval(id);
+          }
+        }
+        if (get.status == 100){
+          
           clearTimeout(timeout);
           return false;
         }

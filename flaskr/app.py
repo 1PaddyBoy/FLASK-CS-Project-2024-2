@@ -60,7 +60,9 @@ def looptake():
 	return [using, counter]
 
 #processes the information inputed to return using and counter for popularity annalsys
-def processes(lines,interest,file,): 
+def processes(lines,interest,file): 
+		people = 1
+		popularityfor = (1,1)
 		dictable = True
 		for a in lines:
 			if len(a) != 2:
@@ -83,7 +85,9 @@ def processes(lines,interest,file,):
 		hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
 		if hashinterest in Twolines:
 			print("amount of people with your interest are" + str(Dlines[hashinterest]))
+			people = Dlines[hashinterest]
 			popularity = moreinfo(hashinterest,Dlines) / len(Twolines)
+			popularityfor = ( - (moreinfo(hashinterest,Dlines) - len(Dlines)), len(Dlines))  # popular out of number 
 			print("popularity = " + str(popularity))
 			using += popularity
 			counter += 1
@@ -94,7 +98,7 @@ def processes(lines,interest,file,):
 			csv.writer(file).writerow([hashinterest,1])
 			using += 0
 			counter += 1
-		return [using,counter]
+		return [using,counter,people,popularityfor] # this returns alot of information, so going in order, using is the amount a popularity counter which along with counter, which records the amount of resources can give the average popularity (using/counter). people returns a list in the order of the interests of how many people have that interest. popularit for returns a similar list that contains tuples organized like this, (order in list of popularities, amount of interests in catagory), this tuple together shows you how popular that interest is. 
 
 #this loops on an existing list of catagories and interests gathering information 
 def loopinterest(combination):
@@ -104,6 +108,8 @@ def loopinterest(combination):
 		catagories.append(a[0])
 		interests.append(a[1])
 
+	people = []
+	peoplefor = []
 	extraInformation = []
 	counter = 0 
 	using = 0
@@ -141,11 +147,14 @@ def loopinterest(combination):
 			output = processes(lines,interest,file,)
 			using += output[0]
 			counter += output[1]
+			people.append(output[2]) # these last two are just directly passed, 
+			peoplefor.append(output[3])
+			print("people for =" + str(peoplefor))
 		except:
 			using += 1
 			counter += 1 
 		
-	return [using,counter,extraInformation, interests]
+	return [using,counter,extraInformation, interests, people]
 
 
 
@@ -392,7 +401,7 @@ def addencryptinfos(newDlines,innie,interest):
 		return newDlines
 
 
-#this gives more info on statistics and otherwise of each interest 
+#this gives more info, statistics etc from a specific interest, here it returns how popular as a number of all interests of that catagory it is 
 def moreinfo(hashinterest, Dlines):
 	print("moreinfo, Dlines is " + str(Dlines))	
 	total = 0
@@ -489,6 +498,21 @@ def results():
 	extra = z[2]
 	counter = z[1]
 	other = z[0]
+	people = z[3]
+	peoplefor = z[4]
+	print("people:")
+	print(people)
+	
+	for a in peoplefor:
+		print(len(a))
+		if len(a) < 2:
+			print("triggered replacement")
+			a = (1,1)
+
+	if len(peoplefor) == 0:
+		peoplefor.append((1,1))
+	print("popularity per:")
+	print(peoplefor)
 	print("popularity will be " + str((other / counter)*100))
 	global popularityWhole
 	popularityWhole = (other / counter)*100
@@ -498,7 +522,7 @@ def results():
 		interestsa.append(a[1])
 	print("len = " + str(len(combination)))
 	print("interests = " + str(interestsa))
-	return render_template("results.html",name="resultsname", len = len(combination), combinations = combination, interests = interestsa, catagories = catagoriesa,extraa = extra)
+	return render_template("results.html",name="resultsname", len = len(combination), combinations = combination, interests = interestsa, catagories = catagoriesa,extraa = extra, peoplelist = people, popularitylist = peoplefor)
 
 
 
