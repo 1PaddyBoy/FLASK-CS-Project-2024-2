@@ -152,7 +152,24 @@
 		xhttp.send();
 	}
 
+	var resultsaudio = new audio("https://www.myinstants.com/instant/crowd-cheering/embed/")
+	
+	let results = document.getElementById("results button")
+	results.addEventListener('click',function() {
+		resultsaudio.play();
+
+
+	});
+	var submitaudio = new audio("https://www.myinstants.com/instant/crowd-cheering/embed/")
+	let submitter = document.getElementById("submitbutton")
+	submitter.addEventListener('click',function() {
+		submitaudio.play();
+
+
+	});
+
 	getStatus();
+	
 </script>
 
 

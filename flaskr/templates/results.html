@@ -29,15 +29,19 @@
 
       </div>
 
-      <div class="progress" id = "progressslider">
-        <div class="status" >
-          <h2 id="innerStatus">Loading...</h2>
-        </div>
-      </div>
-      <br>
-      <br>
+      
       
     </div>
+    <br>
+    <br>
+    
+    <div class="progress" >
+      <div class="status" id = "progressslider" >
+        <h2 id="innerStatus">Loading...</h2>
+      </div>
+    </div>
+    <br>
+    <br>
 
     <script>
       async function getStatus() {
@@ -51,8 +55,10 @@
         }
 
         //element update
-        document.getElementById("innerStatus").innerHTML = get.status * 1 + "&percnt;";
-        document.getElementById("progressslider").style.width = get.status * 1 + "&percnt;";
+        var statusbar = get.status;
+        document.getElementById("innerStatus").innerHTML = statusbar * 1 + "&percnt;";
+        document.getElementById("progressslider").style.width = statusbar * 1 + "%";
+        //$(".status").css({width: "100%",color: "blue"});
         //max status
         if (get.status == 10){
           document.getElementById("innerStatus").innerHTML += " MAXIMUM BASIC";
@@ -62,6 +68,7 @@
 
         timeout = setTimeout(getStatus, 1000);
       }
+      //document.getElementById("progressslider").style.width = 100 * 1 + "%;";
       getStatus()
     </script>
   </body>

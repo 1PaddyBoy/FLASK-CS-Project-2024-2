@@ -35,7 +35,8 @@ def full():
 	outputfile = open("output.txt", 'w')
 	outputfile.write("result of full test " + str(datetime.datetime.now()) + " \n Interest popularity percent =" + str((using / counter)*100) + "%" + " \n total amount of answers given: " + str(counter) + " \n Thanks for testing with us today")
 	print("output file written")
-		
+
+#this loops the asks function and handles reviewing and inputing all the information for the command line full survey 		
 def looptake():
 	counter = 0 
 	using = 0
@@ -58,6 +59,7 @@ def looptake():
 	print("popularity percent = " + str((using / counter)*100) + "%")
 	return [using, counter]
 
+#processes the information inputed to return using and counter for popularity annalsys
 def processes(lines,interest,file,): 
 		dictable = True
 		for a in lines:
@@ -126,18 +128,23 @@ def loopinterest(combination):
 		print("two lines = " + str(Twolines))
 		Dlines = dict(Twolines) #Dlines and Twolines like this only takes the info about the numbers and other stuff into a dictionary 
 
-		innie = list(Dlines.keys()).index(hashinterest)
-		if len(lines[innie]) > 2:
-			extra = lines[innie][2:]
-			print("encyrpted extra =" + str(extra))
-			print("unencyrpted extra =" + str(decrypt(extra,interest)))
-		else:
-			print("no extra information stored")
-		extraInformation.append(str(decrypt(extra,interest)))
+		try:
+			innie = list(Dlines.keys()).index(hashinterest)
+			if len(lines[innie]) > 2:
+				extra = lines[innie][2:]
+				print("encyrpted extra =" + str(extra))
+				print("unencyrpted extra =" + str(decrypt(extra,interest)))
+			else:
+				print("no extra information stored")
+			extraInformation.append(str(decrypt(extra,interest)))
 
-		output = processes(lines,interest,file,)
-		using += output[0]
-		counter += output[1]
+			output = processes(lines,interest,file,)
+			using += output[0]
+			counter += output[1]
+		except:
+			using += 1
+			counter += 1 
+		
 	return [using,counter,extraInformation, interests]
 
 
@@ -193,6 +200,7 @@ def asksfileProcessing(catagory, interesta):
 	except:
 		try:
 			file = open("static\\data\\" + hashcatagory + ".csv","w")
+			
 		except:
 			print("file permissions lost, probably open somewhere else")
 		interest = interesta
@@ -340,6 +348,7 @@ def decrypt(infos, interest):
 
 #asks about adding information to the sheet
 def addinfo(newDlines,innie, interest):
+
 	insert = isInsert(input("would you like to add any information for others to see?"))
 	if insert:
 		return addencryptinfos(newDlines,innie,interest)	
@@ -348,7 +357,7 @@ def addinfo(newDlines,innie, interest):
 		return newDlines
 	#print("finished")
 	
-	
+#actually adds the info passed instead of just playing and testing for it like addinfo
 def addencryptinfos(newDlines,innie,interest):
 		message = input("enter message to be encrypted")
 
@@ -476,7 +485,14 @@ def results():
 	#RESULTS!!!!
 	interestsa = []
 	catagoriesa = []
-	
+	z = loopinterest(combination)
+	extra = z[2]
+	counter = z[1]
+	other = z[0]
+	print("popularity will be " + str((other / counter)*100))
+	global popularityWhole
+	popularityWhole = (other / counter)*100
+	#popularityWhole = 33
 	for a in combination: #delinates double list from website 
 		catagoriesa.append(a[0])
 		interestsa.append(a[1])
