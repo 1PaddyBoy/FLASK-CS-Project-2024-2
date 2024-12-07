@@ -11,12 +11,21 @@
       <div class ="row">
         <div class="column" style = "width: 50%;"> <h3>Interests</h3> 
           <ol>
-            {% for a in range(0, len)%}
-              <li>{{"favorite " + (catagories[a])|string + " is " + (interests[a])|string }}</li>
-              
-              <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} </p>
-              
-            {%endfor%}
+            <form method = "POST">
+              {% for a in range(0, len)%}
+                <li>{{"favorite " + (catagories[a])|string + " is " + (interests[a])|string }}</li>
+                
+                <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} </p>
+                <input type="checkbox" id={{ "insert" + a|string }} name={{ "interest" + a|string }} value="check" onclick="dynInput(this); ">
+                <label for = {{ "insert" + a|string }}>add to interst {{a}} ? </label>
+                
+                <br>
+              {%endfor%}
+              <br>
+              <div id="insertinputs"></div>
+              <br>
+              <input type = "submit" name = "submitentries" value = "submitentries" id = "results button">
+            </form>
           </ol>    
       
     
@@ -34,7 +43,7 @@
 
       
       
-    </div>
+      </div>
     <br>
     <br>
     
@@ -49,7 +58,10 @@
 
     <script>
       var i = 0;
+
+     
       async function getStatus() {
+        
         let get;
         //try to get information from json
         try {
@@ -87,10 +99,43 @@
           return false;
         }
 
-        timeout = setTimeout(getStatus, 1000);
+        //timeout = setTimeout(getStatus, 1000);
       }
       //document.getElementById("progressslider").style.width = 100 * 1 + "%;";
       getStatus()
+
+      function dynInput(cbox) {
+        if (cbox.checked) {
+          var input = document.createElement("textarea");
+          input.type = "text";
+          input.id = cbox.name + "t";
+          input.name = cbox.name + "t";
+          var div = document.createElement("div");
+          div.id = cbox.name + "d";
+          div.innerHTML = "Text to display for " + cbox.name;
+          div.appendChild(input);
+          document.getElementById("insertinputs").appendChild(div);
+        } else {
+          document.getElementById(cbox.name + "d").remove();
+        }
+      }
+
+      //<textarea name = "textareaa1"></textarea>
+      /*function dynInput(cbox) {
+        if (cbox.checked) {
+          var input = document.createElement("input");
+          input.type = "text";
+          input.name = cbox.name + "t";
+          var div = document.createElement("div");
+          input.id = cbox.name + "t";
+          div.innerHTML = "input information for" + cbox.name;
+          div.appendChild(input);
+          document.getElementById("insertinputs").appendChild(div);
+        } else {
+          document.getElementById(cbox.name + "t").remove();
+        }
+      }*/
+    
     </script>
   </body>
 </html>

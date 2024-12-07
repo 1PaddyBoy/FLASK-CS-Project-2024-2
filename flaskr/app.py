@@ -61,12 +61,14 @@ def looptake():
 
 #processes the information inputed to return using and counter for popularity annalsys
 def processes(lines,interest,file): 
-		people = 1
+		people = 0
+		using = 0
+		counter = 0
 		popularityfor = (1,1)
 		dictable = True
 		for a in lines:
-			if len(a) != 2:
-				lines.pop(lines.index(a))	
+			if len(a) < 2:
+				lines.pop(lines.index(a))
 
 		Twolines = []
 		for a in lines:
@@ -83,7 +85,7 @@ def processes(lines,interest,file):
 				total += 0
 		print(total)
 		hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
-		if hashinterest in Twolines:
+		if hashinterest in Dlines.keys():
 			print("amount of people with your interest are" + str(Dlines[hashinterest]))
 			people = Dlines[hashinterest]
 			popularity = moreinfo(hashinterest,Dlines) / len(Twolines)
@@ -92,12 +94,15 @@ def processes(lines,interest,file):
 			using += popularity
 			counter += 1
 		else:
+			
 			print("interest not found")
 			#Dlines[hashinterest] = 1
 			#file.close()
 			csv.writer(file).writerow([hashinterest,1])
 			using += 0
 			counter += 1
+			people = 0
+			popularityfor = ( - (moreinfo(hashinterest,Dlines) - len(Dlines)), len(Dlines))
 		return [using,counter,people,popularityfor] # this returns alot of information, so going in order, using is the amount a popularity counter which along with counter, which records the amount of resources can give the average popularity (using/counter). people returns a list in the order of the interests of how many people have that interest. popularit for returns a similar list that contains tuples organized like this, (order in list of popularities, amount of interests in catagory), this tuple together shows you how popular that interest is. 
 
 #this loops on an existing list of catagories and interests gathering information 
@@ -116,6 +121,10 @@ def loopinterest(combination):
 	for a in range(len(catagories)):
 		catagory = catagories[a]
 		interest = interests[a]
+		for a in similars:
+			if catagory in a:
+				catagory = a[0]
+				break
 		z = asksfileProcessing(catagory,interest)
 
 		
@@ -125,7 +134,9 @@ def loopinterest(combination):
 		interest = z[2]
 
 		hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
-
+		for a in lines:
+			if len(a) < 2:
+				lines.pop(lines.index(a))
 		Twolines = []
 		for a in lines:
 			print(a)
@@ -135,26 +146,35 @@ def loopinterest(combination):
 		Dlines = dict(Twolines) #Dlines and Twolines like this only takes the info about the numbers and other stuff into a dictionary 
 
 		try:
+		#if True:
 			innie = list(Dlines.keys()).index(hashinterest)
 			if len(lines[innie]) > 2:
 				extra = lines[innie][2:]
-				print("encyrpted extra =" + str(extra))
+				
+				print("\n encyrpted extra =" + str(extra))
 				print("unencyrpted extra =" + str(decrypt(extra,interest)))
+				extraInformation.append(str(decrypt(extra,interest)))
 			else:
 				print("no extra information stored")
-			extraInformation.append(str(decrypt(extra,interest)))
+				print(lines[innie])
+			
 
-			output = processes(lines,interest,file,)
+			output = processes(lines,interest,file)
 			using += output[0]
 			counter += output[1]
-			people.append(output[2]) # these last two are just directly passed, 
+			people.append(output[2]) # these last two are just directly passed,
+			print("people to be appened =" + str(output[2])) 
 			peoplefor.append(output[3])
 			print("people for =" + str(peoplefor))
 		except:
 			using += 1
 			counter += 1 
+			print(hashinterest in Dlines.keys())
+			print("new interest")
+			people.append(0)
+			peoplefor.append(("least",len(Twolines)))
 		
-	return [using,counter,extraInformation, interests, people]
+	return [using,counter,extraInformation, people, peoplefor]
 
 
 
@@ -355,6 +375,95 @@ def decrypt(infos, interest):
 	print("decryption done, data = " + str(decrypted))
 	return decrypted	
 
+def addandinfoloop(combinations,checks,infos):
+	interests = []
+	catagories = []
+	for a in combinations: #delinates double list from website 
+		catagories.append(a[0])
+		interests.append(a[1])
+	for a in range(len(catagories)):
+		print("looping for " + str(combinations[a]))
+		print(checks[a]) #adds data and all 
+		if checks[a]:# this goes into if they want to add to it. you need to record your answer if you are going to add information	
+			catagory = catagories[a]
+			interest = interests[a]
+			for x in similars:
+				if catagory in x:
+					catagory = x[0]
+					break
+			z = asksfileProcessing(catagory,interest)
+
+			
+			file = z[3]
+			catagory = z[0]
+			lines = z[1]
+			interest = z[2]
+
+			hashinterest = hashlib.sha384(interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+
+			#dictable = True
+			for x in lines:
+				if len(x) < 2:
+					lines.pop(lines.index(x))
+
+			Twolines = []
+			for b in lines:
+				print(b)
+				if len(b) >= 2:
+					Twolines.append(b[0:2])#new isolation piece
+			print("two lines = " + str(Twolines))
+			Dlines = dict(Twolines) #Dlines and Twolines like this only takes the info about the numbers and other stuff into a dictionary 
+
+			
+			hashcatagory = hashlib.sha384(catagory.encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+		
+			if hashinterest in Dlines.keys():
+				innie = list(Dlines.keys()).index(hashinterest)
+				Dlines[hashinterest] = int(Dlines[hashinterest])
+				#this is where encyrption of the number could take place 
+				Dlines[hashinterest] += 1
+				print(Dlines[hashinterest])
+				print("D lines = " + str(Dlines))
+				file.close()
+				#file.truncate()
+				
+				#newDlines = Dlines.items()
+				#newDlines = [list(a) for a in newDlines]
+				#scratch:
+				newDlines = lines
+				try:
+					newDlines[innie][1] = int(newDlines[innie][1]) + 1
+				except:
+					newDlines[innie][1] = 1
+				if infos[a] != None and infos[a] != "":
+					newDlines = addinfofixed(newDlines,innie,interest,infos[a]) # this adds the information into the section
+
+				
+				
+			else:
+				file.close()
+				newDlines = lines
+				print("wasn't there so didn't update")
+				newDlines.append([hashinterest,1])
+				print("mystery list is " + str(a))
+				if infos[a] != None and infos[a] != "":
+					newDlines = addinfofixed(newDlines,len(newDlines)-1,interest,infos[a])
+				
+			if newDlines != []:
+					os.remove("static\\data\\" + hashcatagory+".csv")
+					#csv.writer(file).writerows(Dlines)
+					file = open("static\\data\\" + hashcatagory + ".csv","w")	
+					print("new Dlines = " + str(newDlines))
+					for a in newDlines:
+						if a != []:
+							print("line to be printed" + str(a))
+							csv.writer(file).writerow(a)
+					print("should have rewriten")
+					file.close()
+		
+
+	
+
 #asks about adding information to the sheet
 def addinfo(newDlines,innie, interest):
 
@@ -365,7 +474,48 @@ def addinfo(newDlines,innie, interest):
 		print("information not added")
 		return newDlines
 	#print("finished")
+
+def addinfofixed(newDlines,innie, interest,info):
+
+		insert = info
 	
+		message = insert
+
+		#method for taking good numbers
+		"""if len(interest) > 48:
+			interest = interest[0:48]
+		else:
+			interest = interest + "".join(["x" for _ in range(48 - len(interest))])"""
+		
+
+		code_bytes = interest.encode("utf-8")
+		key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32])
+		print(len(key))
+		print(key)
+
+		"""encoded = hashinterest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')
+
+		encoded = interest.encode(encoding = "UTF-8", errors='xmlcharrefreplace')
+		key = encoded[0:2 * (len(encoded)//3)]
+		iv = encoded[len(encoded)//3:]
+
+		cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+		encryptor = cipher.encryptor()
+		ct = encryptor.update(message.encode(encoding = "UTF-8", errors='xmlcharrefreplace')) + encryptor.finalize()"""
+		f = Fernet(key)
+		ct = f.encrypt(message.encode(encoding = "UTF-8", errors='xmlcharrefreplace'))
+
+		#newDlines[innie].append(message) # unencrypted right now
+		newDlines[innie].append(str(ct)) # encrypted right now
+		print(newDlines[innie])
+		print("information added")
+		return newDlines	
+
+
+		print("information not added")
+		return newDlines
+	#print("finished")
+
 #actually adds the info passed instead of just playing and testing for it like addinfo
 def addencryptinfos(newDlines,innie,interest):
 		message = input("enter message to be encrypted")
@@ -491,9 +641,29 @@ def remove(before,removers):
 
 @app.route("/results",methods=['GET','POST'])
 def results():
+	if request.method == 'POST':
+		checkboxes = []
+		textboxes = []
+		print(request.form)
+		for a in range(len(combination)):
+			b = request.form.get("interest" + str(a))
+			print("checkbox " + "insert" + str(a) + " =" + str(b))
+			checkboxes.append(b == "check")
+			text = request.form.get("interest" + str(a)+"t")
+			textboxes.append(text)
+			print("textbox = " + str(text))
+		print("checkboxes =" + str(checkboxes))
+		print("textboxes =" + str(textboxes))
+		addandinfoloop(combination,checkboxes,textboxes)
+		
+		
+
 	#RESULTS!!!!
 	interestsa = []
 	catagoriesa = []
+	for a in combination: #delinates double list from website 
+		catagoriesa.append(a[0])
+		interestsa.append(a[1])
 	z = loopinterest(combination)
 	extra = z[2]
 	counter = z[1]
@@ -502,7 +672,7 @@ def results():
 	peoplefor = z[4]
 	print("people:")
 	print(people)
-	
+	print(peoplefor)
 	for a in peoplefor:
 		print(len(a))
 		if len(a) < 2:
@@ -513,9 +683,15 @@ def results():
 		peoplefor.append((1,1))
 	print("popularity per:")
 	print(peoplefor)
-	print("popularity will be " + str((other / counter)*100))
+	try:
+		print("popularity will be " + str((other / counter)*100))
+	except:
+		print("popularity none")
 	global popularityWhole
-	popularityWhole = (other / counter)*100
+	try:
+		popularityWhole = (other / counter)*100
+	except:
+		popularityWhole = 1
 	#popularityWhole = 33
 	for a in combination: #delinates double list from website 
 		catagoriesa.append(a[0])
