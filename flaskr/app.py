@@ -72,19 +72,25 @@ def hello():
 @app.route("/results",methods=['GET','POST'])
 def results():
 	if request.method == 'POST':
-		checkboxes = []
-		textboxes = []
-		print(request.form)
-		for a in range(len(extrahelpers.combination)):
-			b = request.form.get("interest" + str(a))
-			print("checkbox " + "insert" + str(a) + " =" + str(b))
-			checkboxes.append(b == "check")
-			text = request.form.get("interest" + str(a)+"t")
-			textboxes.append(text)
-			print("textbox = " + str(text))
-		print("checkboxes =" + str(checkboxes))
-		print("textboxes =" + str(textboxes))
-		extrahelpers.addandinfoloop(extrahelpers.combination,checkboxes,textboxes)
+		if request.form.get("return") == "return":
+			print("returned button2")
+			return redirect("/")
+		else:
+			checkboxes = []
+			textboxes = []
+			print(request.form)
+			for a in range(len(extrahelpers.combination)):
+				b = request.form.get("interest" + str(a))
+				print("checkbox " + "insert" + str(a) + " =" + str(b))
+				checkboxes.append(b == "check")
+				text = request.form.get("interest" + str(a)+"t")
+				textboxes.append(text)
+				print("textbox = " + str(text))
+			print("checkboxes =" + str(checkboxes))
+			print("textboxes =" + str(textboxes))
+			extrahelpers.addandinfoloop(extrahelpers.combination,checkboxes,textboxes)
+	else:
+		print("elsed button")
 		
 		
 
