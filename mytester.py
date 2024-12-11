@@ -112,7 +112,7 @@ def processes(lines,interest,file):
 			using += 0
 			counter += 1
 			people = 0
-			popularityfor = ( - (moreinfo(hashinterest,Dlines) - len(Dlines)), len(Dlines))
+			popularityfor = ( - (moreinfo(hashinterest,Dlines) - len(Dlines)), len(Dlines) + 1)
 		return [using,counter,people,popularityfor] # this returns alot of information, so going in order, using is the amount a popularity counter which along with counter, which records the amount of resources can give the average popularity (using/counter). people returns a list in the order of the interests of how many people have that interest. popularit for returns a similar list that contains tuples organized like this, (order in list of popularities, amount of interests in catagory), this tuple together shows you how popular that interest is. 
 
 #this loops on an existing list of catagories and interests gathering information . loops through many interests. combination is a list of tuples contianing the catagory first and interest second. [(apples, grannysmith), (movies,breakfast club)]
