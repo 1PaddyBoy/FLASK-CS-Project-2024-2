@@ -38,7 +38,7 @@ def hello():
 				for b in range(len(text[a])):
 					printdev('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1))
 					printdev(request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)))
-					text[a][b] = request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1))
+					text[a][b] = request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)).lower()
 			printdev(text)
 			removers = []
 			for a in text:
@@ -101,6 +101,9 @@ def results():
 	other = z[0]
 	people = z[3]
 	peoplefor = z[4]
+	for a in range(len(peoplefor)):
+		peoplefor[a] = (peoplefor[a][1] - peoplefor[a][0],peoplefor[a][1]) 
+
 	printdev("people:")
 	printdev(people)
 	printdev(peoplefor)
@@ -129,7 +132,10 @@ def results():
 		interestsa.append(a[1])
 	printdev("len = " + str(len(extrahelpers.combination)))
 	printdev("interests = " + str(interestsa))
-	return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extra, peoplelist = people, popularitylist = peoplefor)
+	extrare = []
+	for a in extra:
+		extrare.append(a[3:len(a) - 2] + "; ")
+	return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
 
 
 #api page for the results page, not for viewers really just used for json return 

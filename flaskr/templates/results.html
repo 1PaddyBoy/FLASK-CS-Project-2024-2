@@ -6,6 +6,7 @@
     <div class=page>
       <h1>RESULTS</h1>
       <h2>here is your results page</h2>
+      <h3>below information about how popular each of the catagories and interests you entered are as well as on the right information anyone has left encyrpted only for people with your shared interest</h3>
 
 
       <div class ="row">
@@ -15,9 +16,9 @@
               {% for a in range(0, len)%}
                 <li>{{"favorite " + (catagories[a])|string + " is " + (interests[a])|string }}</li>
                 
-                <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} </p>
+                <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{ popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} interests within this catagory</p>
                 <input type="checkbox" id={{ "insert" + a|string }} name={{ "interest" + a|string }} value="check" onclick="dynInput(this); ">
-                <label for = {{ "insert" + a|string }}>add to interst {{a}} ? </label>
+                <label for = {{ "insert" + a|string }}>add to interst {{a + 1}} ? </label>
                 
                 <br>
               {%endfor%}
