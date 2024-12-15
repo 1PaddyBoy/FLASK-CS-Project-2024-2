@@ -7,7 +7,10 @@
       <h1>RESULTS</h1>
       <h2>here is your results page</h2>
       <h3>below information about how popular each of the catagories and interests you entered are as well as on the right information anyone has left encyrpted only for people with your shared interest</h3>
-
+      <button class="collapsible">More information</button>
+      <div class="content">
+        <p>This website will compare your entered interests anonymously with the servers database. Then if you choose data can be recorded to add and you can see messages others have left encrypted just for those with your interest. All data is securely held</p>
+      </div>
 
       <div class ="row">
         <div class="column" style = "width: 50%;"> <h3>Interests</h3> 
@@ -61,6 +64,23 @@
     </form>
 
     <script>
+      var coll = document.getElementsByClassName("collapsible");
+      var k;
+      //make event listener for each
+      for (k = 0; k < coll.length; k++) {
+        coll[i].addEventListener("click", function() {
+        
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          //autosizing but 5 buffer, could make this equal for the two but predefintion probably then needed or whole dynamic system
+          content.style.maxHeight = content.scrollHeight + 5 + "px";
+        } 
+        
+        });
+      }
       var i = 0;
 
      
