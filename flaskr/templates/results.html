@@ -17,13 +17,13 @@
                 <li>{{"favorite " + (catagories[a])|string + " is " + (interests[a])|string }}</li>
                 
                 <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{ popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} interests within this catagory</p>
-                <input type="checkbox" id={{ "insert" + a|string }} name={{ "interest" + a|string }} value="check" onclick="dynInput(this); ">
+                <input type="checkbox" id={{ "insert" + a|string }} name={{ "interest" + (a+1)|string }} value="check" onclick="dynInput(this); ">
                 <label for = {{ "insert" + a|string }}>add to interst {{a + 1}} ? </label>
-                
+                <div id={{"insertinputsinterest" + a|string }} ></div>
                 <br>
               {%endfor%}
               <br>
-              <div id="insertinputs"></div>
+              
               <br>
               <input type = "submit" name = "submitentries" value = "submitentries" id = "results button">
             </form>
@@ -118,7 +118,7 @@
           div.id = cbox.name + "d";
           div.innerHTML = "Text to display for " + cbox.name;
           div.appendChild(input);
-          document.getElementById("insertinputs").appendChild(div);
+          document.getElementById("insertinputs" + cbox.name).appendChild(div);
         } else {
           document.getElementById(cbox.name + "d").remove();
         }

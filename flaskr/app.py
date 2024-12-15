@@ -5,7 +5,7 @@ from itertools import count as crashB
 from spellchecker import SpellChecker
 import datetime
 import json
-from flask import Flask, flash, redirect, render_template, request, session, abort, send_from_directory, current_app
+from flask import Flask, flash, redirect, render_template, request, session, abort, send_from_directory, current_app, request
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.fernet import Fernet
 import base64
@@ -49,6 +49,7 @@ def hello():
 			
 			printdev("new combinations to be added =" + str(text))
 			extrahelpers.combination.extend(text)
+			#extrahelpers.writecombination(text,getip())
 			extra.append("test " + str(text) + "endtest                                          test test test test test test test test test test test test test test test")
 			printdev(extrahelpers.combination)
 		elif 'results' in request.form:
@@ -61,7 +62,8 @@ def hello():
 	return render_template('entry.html',name="testername")	
 	#return "Hello World!"
 
-
+def getip():
+	request.environ['REMOTE_ADDR']
 
 #results page, this controls the results page, its forms and the like, loaded information however still from other url 
 @app.route("/results",methods=['GET','POST'])
@@ -102,7 +104,12 @@ def results():
 	people = z[3]
 	peoplefor = z[4]
 	for a in range(len(peoplefor)):
-		peoplefor[a] = (peoplefor[a][1] - peoplefor[a][0],peoplefor[a][1]) 
+		print(peoplefor[a][1])
+		print(peoplefor[a][0])
+		try:
+			peoplefor[a] = (peoplefor[a][1] - peoplefor[a][0],peoplefor[a][1]) 
+		except:
+			peoplefor[a] = peoplefor[a]
 
 	printdev("people:")
 	printdev(people)
@@ -145,6 +152,10 @@ def resultsstatus():
 	statusList = {'status':extrahelpers.popularityWhole}
 	#printdev(statusList)
 	return json.dumps(statusList)
+
+@app.route("/test")
+def test():
+	return render_template("test.html",name="test")
 
 #main and runs just normal without ui if called without flask
 def main():
