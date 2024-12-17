@@ -12,10 +12,10 @@ import base64
 import socket
 import sys
 
-devcodes = False # this prints everything to the terminal if you want to it. 
+devcodes = True # this prints everything to the terminal if you want to it. 
 def printdev(toprint): # function to control whether stuff is printed to terminal 
 	if devcodes:
-		printdev(toprint)
+		print(toprint)
 #custom modules and custom path check, all dev
 for path in sys.path:
 		printdev(path)
@@ -77,10 +77,10 @@ def results():
 			textboxes = []
 			printdev(request.form)
 			for a in range(len(extrahelpers.combination)):
-				b = request.form.get("interest" + str(a))
-				printdev("checkbox " + "insert" + str(a) + " =" + str(b))
+				b = request.form.get("interest" + str(a + 1))
+				printdev("checkbox " + "insert" + str(a + 1) + " =" + str(b))
 				checkboxes.append(b == "check")
-				text = request.form.get("interest" + str(a)+"t")
+				text = request.form.get("interest" + str(a + 1)+"t")
 				textboxes.append(text)
 				printdev("textbox = " + str(text))
 			printdev("checkboxes =" + str(checkboxes))
@@ -140,8 +140,14 @@ def results():
 	printdev("len = " + str(len(extrahelpers.combination)))
 	printdev("interests = " + str(interestsa))
 	extrare = []
+	printdev("extrastuffs")
+	print(extra)
+	
+	print(extrare)
+	extrare = []
 	for a in extra:
-		extrare.append(a[3:len(a) - 2] + "; ")
+		extrare.append(' ;\n '.join(a))
+	print(extrare)
 	return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
 
 

@@ -5,15 +5,17 @@
   <body>
     <div class=page>
       <h1>RESULTS</h1>
-      <h2>here is your results page</h2>
-      <h3>below information about how popular each of the catagories and interests you entered are as well as on the right information anyone has left encyrpted only for people with your shared interest</h3>
-      <button class="collapsible">More information</button>
-      <div class="content">
-        <p>This website will compare your entered interests anonymously with the servers database. Then if you choose data can be recorded to add and you can see messages others have left encrypted just for those with your interest. All data is securely held</p>
+      
+      <h3>Below on the left is information about how popular each of the catagories and interests you entered are. On the right information anyone has left encyrpted only for people with your shared interest. All of this information is encrypted so that NO ONE other than those with your interest can read it</h3>
+      <div>
+        <button class="collapsible">More information</button>
+          <div class="content">
+            <p>This page will give further information on each of the interests you entered. On the left, under some basic information on the popularity of the interest, you can click the check box to be added to the amount of people recorded to have that interest. Once you do a textbox will open up where you can enter information to be added for anyone with your interest to see.</p>
+          </div>
       </div>
 
       <div class ="row">
-        <div class="column" style = "width: 50%;"> <h3>Interests</h3> 
+        <div class="column" style = "width: 50%;"> <h3>Here are all of your interests, check the check boxes to add your information on the topic </h3> 
           <ol>
             <form method = "POST">
               {% for a in range(0, len)%}
@@ -21,8 +23,8 @@
                 
                 <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{ popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} interests within this catagory</p>
                 <input type="checkbox" id={{ "insert" + a|string }} name={{ "interest" + (a+1)|string }} value="check" onclick="dynInput(this); ">
-                <label for = {{ "insert" + a|string }}>add to interst {{a + 1}} ? </label>
-                <div id={{"insertinputsinterest" + a|string }} ></div>
+                <label for = {{ "insert" + a|string }}>record for this interest? {{a + 1}} ? </label>
+                <div id={{"insertinputsinterest" + (a+1)|string }} ></div>
                 <br>
               {%endfor%}
               <br>
@@ -35,7 +37,7 @@
     
         </div>
         <div class="column" style = "width:50%;">
-          <h2>Extra information</h2>
+          <h2>Information that other people have posted for each of your interests is listed below</h2>
           {% for a in range(0, len)%}
             <div class="box">
               {{extraa[a]}}
@@ -68,7 +70,7 @@
       var k;
       //make event listener for each
       for (k = 0; k < coll.length; k++) {
-        coll[i].addEventListener("click", function() {
+        coll[k].addEventListener("click", function() {
         
         this.classList.toggle("active");
         var content = this.nextElementSibling;
@@ -95,7 +97,7 @@
           console.error("Error: ", e);
         }
 
-        i = 1;
+        
         var id = setInterval(frame, 10);
         //element update
         var statusbar = get.status;
@@ -136,7 +138,7 @@
           input.name = cbox.name + "t";
           var div = document.createElement("div");
           div.id = cbox.name + "d";
-          div.innerHTML = "Text to display for " + cbox.name;
+          div.innerHTML = "Text to add for " + cbox.name;
           div.appendChild(input);
           document.getElementById("insertinputs" + cbox.name).appendChild(div);
         } else {

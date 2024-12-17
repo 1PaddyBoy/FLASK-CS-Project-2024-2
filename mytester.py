@@ -182,9 +182,19 @@ def loopinterest(combination):
 				
 				printdev("\n encyrpted extra =" + str(extra))
 				printdev("unencyrpted extra =" + str(decrypt(extra,interest)))
-				extraInformation.append(str(decrypt(extra,interest)))
+				print(decrypt(extra,interest))
+				a = decrypt(extra,interest)
+				c = []
+				for b in a:
+					if len(b) > 4:
+						b = b.decode("utf-8")
+						c.append(b)
+						print(b)
+				print("c =" + str(c))
+				extraInformation.append(c)
 			else:
 				printdev("no extra information stored")
+				extraInformation.append("")
 				printdev(lines[innie])
 			
 
@@ -200,6 +210,7 @@ def loopinterest(combination):
 			counter += 1 
 			printdev(hashinterest in Dlines.keys())
 			printdev("new interest")
+			extraInformation.append("")
 			people.append(0)
 			peoplefor.append(("least",len(Twolines)))
 		
