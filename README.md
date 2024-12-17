@@ -30,3 +30,5 @@ by default it runs on port 5000
 
 
 more information is in specific function file and within website how to use page. 
+
+information on each function is in the functions.txt file in this same folder

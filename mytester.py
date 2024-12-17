@@ -23,6 +23,25 @@ def printdev(toprint):
 		printdev(toprint)
 
 
+def getcombination(ip):
+	for a in combination:
+		if a[0] == ip:
+			 return a[1:]
+
+def writecombination(inputinfo,ip):
+	for a in range(len(combination)):
+		if combination[a][0] == ip:
+			combination[a].append(inputinfo)
+			return True
+	combination.append([ip].extend(inputinfo))
+
+def deletecombination(inputinfo,ip):
+	for a in range(len(combination)):
+		if combination[a][0] == ip:
+			combination.pop(a)
+			return True
+	return False
+
 popularityWhole = 30 # holds the popularity for each user for the status bar at the end 
 combination = [] # holdes the catagory and interest data together as tuples for use in results page 
 def printer():
