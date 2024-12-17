@@ -1,0 +1,64 @@
+app.py functions:
+
+hello() -returns render - #main routing for main page, controls the textboxes and submit button as well. 
+
+getip() - returns IP - returns the IP of connecting computer 
+
+resultsstatus() - returns jsondump - #api page for the results page, not for viewers really just used for json return 
+
+test() - returns render - #used for test
+
+main() - returns render - #main and runs just normal without ui if called without flask
+
+formpostre() - #just used for testing, doesn't really do anything 
+
+getStatus() - #not really used right now, just for testing #some day a seperate thread for this status would be nice. this is here made for a a seperate results page, idk if I will combine or not yet. 
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+mytester.py functions: 
+
+
+printdev(toprint) - no return - #prints print functions if devcodes is true.
+
+getcombination(ip) - returns combination of ip - # takes value with id
+
+writecombination(inputinfo,ip) - returns true or false if its successful
+
+deletecombination(inputinfo,ip) - returns success code - #this deletes the combination assosicated with ip
+
+printer() - no return - #print tester
+
+full() - no return - # input of multiple catagories and interests from the terminal. kept just for terminal access and testing.  
+
+looptake() - returns [using, counter] - #this loops the asks function and handles reviewing and inputing all the information for the command line full survey. not necessary for UI		
+
+processes(lines,interest,file)- returns processing output - #processes the information inputed to return using and counter for popularity annalsys.  this processes the interest put in. 
+
+loopinterest(combination) - returns [using,counter,extraInformation, people, peoplefor] - #this loops on an existing list of catagories and interests gathering information . loops through many interests. combination is a list of tuples contianing the catagory first and interest second. [(apples, grannysmith), (movies,breakfast club)] 
+
+asks() - returns the associated file processing, asksfileProcessing(catagory, interest) - #asks individually for each interest and catagory, can be seperately spread out. 
+
+asksfileProcessing(catagory, interesta) - returns [catagory,lines,interest,file] - #this does all the file processing and ecetera. it attempts to open the files behind each catagory and handles some of the errors around doing so. 
+
+individual() - no return - #gives individual data for each catagory and interest. this is used just for terminal access and is for single input and access of interest through terminal 
+
+addandinfoloop(combinations,checks,infos) - no return - #this adds to the amount of people and adds all information passed. combination is like above a list of tuples containing catagory and interest, checks is a list of booleans about which the data should be recorded for, and info is a list of the extra information to be encrypted and stored with each interest. They are all in order of the other so the order the interests appear is the order of the boolean list and of the interests. 
+
+addinfo(newDlines,innie, interest) - returns the updated dlines of the input - #asks about adding information to the sheet. this is used for terminal access where it needs to be asked. 
+
+addinfofixed(newDlines,innie, interest,info) - returns the updated Dlines - #this adds fixed information to newDliens instead of asking like above, used for GUI where info already known. 
+
+addencryptinfos(newDlines,innie,interest) - returns updated Dlines - #actually adds the info passed instead of just playing and testing for it like addinfo. this does the actual encryption part. asks for it and so is only to be used in termainl 
+
+moreinfo(hashinterest, Dlines) - returns the int popularityPer - #this gives more info, statistics etc from a specific interest, here it returns how popular as a number of all interests of that catagory it is 
+
+isInsert(inner), returns Boolean yes - #if an answer is correct or yes or sometthing. this just returns true if it means yes in some sort. 
+
+download() - directory download code - #does not work right now but attempts to download a file, just a test but can be utilized to download the extra information each person adds. not utilized right now but maybe sometime.  
+
+remove(before,removers) - returns modified list before after removers removed -- #doesn't check just removes all removers from before. takes list before and removes all in list remover from it. 
