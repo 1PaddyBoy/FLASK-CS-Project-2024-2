@@ -12,7 +12,7 @@ import base64
 import socket
 import sys
 
-devcodes = True # this prints everything to the terminal if you want to it. 
+devcodes = False # this prints everything to the terminal if you want to it. 
 def printdev(toprint): # function to control whether stuff is printed to terminal 
 	if devcodes:
 		print(toprint)
@@ -21,6 +21,14 @@ for path in sys.path:
 		printdev(path)
 import mytester as extrahelpers
 
+def getcombination():
+	return extrahelpers.getcombination(getip())
+
+def writecombination(inputinfo):
+	return extrahelpers.writecombination(inputinfo,getip())
+
+def deletecombination():
+	return extrahelpers.deletecombination(getip())
 
 extra=[] #holds extra information between functions, not that necessary 
 
@@ -48,13 +56,15 @@ def hello():
 			text = extrahelpers.remove(text,removers)
 			
 			printdev("new combinations to be added =" + str(text))
-			extrahelpers.combination.extend(text)
+			#extrahelpers.combination.extend(text)
+			writecombination(text)
 			#extrahelpers.writecombination(text,getip())
 			extra.append("test " + str(text) + "endtest                                          test test test test test test test test test test test test test test test")
-			printdev(extrahelpers.combination)
+			printdev(getcombination())
 		elif 'results' in request.form:
 			#this does the results button
 			printdev("results")
+			print(getip())
 			return redirect("/results")
 
 		else:
@@ -63,7 +73,11 @@ def hello():
 	#return "Hello World!"
 
 def getip():
-	request.environ['REMOTE_ADDR']
+	if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+		a = request.environ['REMOTE_ADDR']
+	else:
+		a = request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
+	return [request.environ['REMOTE_ADDR'], request.environ.get('HTTP_X_REAL_IP', request.remote_addr), a]
 
 #results page, this controls the results page, its forms and the like, loaded information however still from other url 
 @app.route("/results",methods=['GET','POST'])
@@ -76,7 +90,8 @@ def results():
 			checkboxes = []
 			textboxes = []
 			printdev(request.form)
-			for a in range(len(extrahelpers.combination)):
+			#for a in range(len(extrahelpers.combination)):
+			for a in range(len(getcombination())):
 				b = request.form.get("interest" + str(a + 1))
 				printdev("checkbox " + "insert" + str(a + 1) + " =" + str(b))
 				checkboxes.append(b == "check")
@@ -85,7 +100,8 @@ def results():
 				printdev("textbox = " + str(text))
 			printdev("checkboxes =" + str(checkboxes))
 			printdev("textboxes =" + str(textboxes))
-			extrahelpers.addandinfoloop(extrahelpers.combination,checkboxes,textboxes)
+			#extrahelpers.addandinfoloop(extrahelpers.combination,checkboxes,textboxes)
+			extrahelpers.addandinfoloop(getcombination(),checkboxes,textboxes)
 	else:
 		printdev("elsed button")
 		
@@ -94,18 +110,20 @@ def results():
 	#RESULTS!!!!
 	interestsa = []
 	catagoriesa = []
-	for a in extrahelpers.combination: #delinates double list from website 
+	#for a in extrahelpers.combination: #delinates double list from website
+	for a in getcombination(): #delinates double list from website 
 		catagoriesa.append(a[0])
 		interestsa.append(a[1])
-	z = extrahelpers.loopinterest(extrahelpers.combination)
+	#z = extrahelpers.loopinterest(extrahelpers.combination)
+	z = extrahelpers.loopinterest(getcombination())
 	extra = z[2]
 	counter = z[1]
 	other = z[0]
 	people = z[3]
 	peoplefor = z[4]
 	for a in range(len(peoplefor)):
-		print(peoplefor[a][1])
-		print(peoplefor[a][0])
+		printdev(peoplefor[a][1])
+		printdev(peoplefor[a][0])
 		try:
 			peoplefor[a] = (peoplefor[a][1] - peoplefor[a][0],peoplefor[a][1]) 
 		except:
@@ -134,21 +152,24 @@ def results():
 	except:
 		extrahelpers.popularityWhole = 1
 	#popularityWhole = 33
-	for a in extrahelpers.combination: #delinates double list from website 
+	#for a in extrahelpers.combination: #delinates double list from website 
+	for a in getcombination(): #delinates double list from website 
 		catagoriesa.append(a[0])
 		interestsa.append(a[1])
 	printdev("len = " + str(len(extrahelpers.combination)))
+	printdev("len = " + str(len(getcombination())))
 	printdev("interests = " + str(interestsa))
 	extrare = []
 	printdev("extrastuffs")
-	print(extra)
+	printdev(extra)
 	
-	print(extrare)
+	printdev(extrare)
 	extrare = []
 	for a in extra:
 		extrare.append(' ;\n '.join(a))
-	print(extrare)
-	return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
+	printdev(extrare)
+	#return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
+	return render_template("results.html",name="resultsname", len = len(getcombination()), combinations = getcombination(), interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
 
 
 #api page for the results page, not for viewers really just used for json return 

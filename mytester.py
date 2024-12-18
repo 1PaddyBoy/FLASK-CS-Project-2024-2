@@ -17,6 +17,13 @@ import sys
 
 devcodes = False # prints testing info, dev stuff, not important for daily user and way clutters the terminal 
 
+def getip():
+	if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+		a = request.environ['REMOTE_ADDR']
+	else:
+		a = request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
+	return [request.environ['REMOTE_ADDR'], request.environ.get('HTTP_X_REAL_IP', request.remote_addr), a]
+
 #prints print functions if devcodes is true.
 def printdev(toprint):
 	if devcodes:
@@ -24,18 +31,28 @@ def printdev(toprint):
 
 
 def getcombination(ip):
+	ip = ip[2]
 	for a in combination:
-		if a[0] == ip:
-			 return a[1:]
+		try:
+			print("a = " + str(a))
+			if a[0] == ip:
+				return a[1:]
+		except:
+			print("no combination yet written")
+			return []
 
 def writecombination(inputinfo,ip):
+	ip = ip[2]
 	for a in range(len(combination)):
 		if combination[a][0] == ip:
 			combination[a].append(inputinfo)
+			print("true happened")
 			return True
-	combination.append([ip].extend(inputinfo))
+	combination.append([ip] + inputinfo)
+	print("new combination with ip " + str(ip) + "  = " + str(combination))
 
-def deletecombination(inputinfo,ip):
+def deletecombination(ip):
+	ip = ip[2]
 	for a in range(len(combination)):
 		if combination[a][0] == ip:
 			combination.pop(a)
@@ -48,7 +65,7 @@ def printer():
         printdev("helpers worked")
 
 #similars groups similar catagories, just combiens those interests in the backend data, for example music, tunes, melodies all go to the same place . 
-similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"]]
+similars = [ ["songs", "music", "tunes", "melodies"],["movies", "films", "long form videos", "motion pictures", "cinema"],["tv shows", "shows", "television shows", "series"], ["games", "video games", "electronic games", "interactive entertainment"], ["books", "novels", "literature", "publications"], ["food", "cuisine", "meals", "dishes"],["cars", "automobiles", "vehicles", "motorcars"],["clothes", "apparel", "garments", "attire"],["computers", "PCs", "desktops"],["phones", "smartphones", "mobiles", "cell phones"],["sports", "athletics", "games", "physical activities"],["art", "paintings", "sculptures", "visual arts"],["furniture", "home decor", "household items", "fixtures"],["animals", "pets", "creatures", "fauna"],["plants", "flora", "vegetation", "greenery"], ["weather", "climate", "atmospheric conditions", "meteorology"],["travel", "tourism", "journeys", "trips"],["technology", "tech", "gadgets", "devices"],["health", "wellness", "fitness", "medical"],["education", "learning", "schooling", "academics"],["finance", "money", "economics", "banking"],["history", "past events", "chronicles", "records"],["science", "research", "experiments", "studies"],["nature", "environment", "ecosystem", "wildlife"],["music instruments", "instruments", "musical tools", "sound devices"],["beverages", "drinks", "drinking liquids", "refreshments"],["holidays", "vacations", "breaks", "getaways"],["buildings", "structures", "edifices", "constructions"],["jobs", "careers", "occupations", "professions"],["languages", "tongues", "dialects", "linguistics"],["car","cars","car brands","vehicles","vehicle brands"]]
 alphabet = "abcdefghijklmnopqrstuvwxyz"# alphabet because I'm too lazy to load ascii 
 
 # input of multiple catagories and interests from the terminal. kept just for terminal access and testing.  
@@ -182,15 +199,15 @@ def loopinterest(combination):
 				
 				printdev("\n encyrpted extra =" + str(extra))
 				printdev("unencyrpted extra =" + str(decrypt(extra,interest)))
-				print(decrypt(extra,interest))
+				printdev(decrypt(extra,interest))
 				a = decrypt(extra,interest)
 				c = []
 				for b in a:
 					if len(b) > 4:
 						b = b.decode("utf-8")
 						c.append(b)
-						print(b)
-				print("c =" + str(c))
+						printdev(b)
+				printdev("c =" + str(c))
 				extraInformation.append(c)
 			else:
 				printdev("no extra information stored")
