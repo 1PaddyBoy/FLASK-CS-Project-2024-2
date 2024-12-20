@@ -15,7 +15,7 @@ import base64
 import socket
 import sys
 
-devcodes = False # prints testing info, dev stuff, not important for daily user and way clutters the terminal 
+devcodes = True # prints testing info, dev stuff, not important for daily user and way clutters the terminal 
 
 def getip():
 	if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
@@ -27,7 +27,7 @@ def getip():
 #prints print functions if devcodes is true.
 def printdev(toprint):
 	if devcodes:
-		printdev(toprint)
+		print(toprint)
 
 
 def getcombination(ip):
