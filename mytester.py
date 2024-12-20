@@ -32,10 +32,11 @@ def printdev(toprint):
 
 def getcombination(ip):
 	ip = ip[2]
+	hashedip = hashlib.sha384(str(ip).encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
 	for a in combination:
 		try:
 			print("a = " + str(a))
-			if a[0] == ip:
+			if a[0] == hashedip:
 				return a[1:]
 		except:
 			print("no combination yet written")
@@ -43,12 +44,16 @@ def getcombination(ip):
 
 def writecombination(inputinfo,ip):
 	ip = ip[2]
+	hashedip = hashlib.sha384(str(ip).encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
 	for a in range(len(combination)):
-		if combination[a][0] == ip:
-			combination[a].append(inputinfo)
+		if combination[a][0] == hashedip:
+			print(inputinfo)
+			for b in inputinfo:
+				combination[a].append(b)
 			print("true happened")
 			return True
-	combination.append([ip] + inputinfo)
+	
+	combination.append([hashedip] + inputinfo)
 	print("new combination with ip " + str(ip) + "  = " + str(combination))
 
 def deletecombination(ip):

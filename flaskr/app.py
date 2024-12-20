@@ -21,11 +21,56 @@ for path in sys.path:
 		printdev(path)
 import mytester as extrahelpers
 
+writentoo = []
+
+def writewrittentoo(stuff):
+	hashedip = hashlib.sha384(str(getip()[2]).encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+	for a in writentoo:
+		if a[0] == hashedip:
+			a.extend(stuff)
+			return True
+	writentoo.append([hashedip] + stuff)
+	return True
+
+
+def getwrittentoo():
+	hashedip = hashlib.sha384(str(getip()[2]).encode(encoding = "UTF-8", errors='xmlcharrefreplace')).hexdigest()
+	for a in writentoo:
+		if a[0] == hashedip:
+			return a[1:]
+	printdev("none yet")
+	return []
+
+
+def decrypting(key, message):
+	code_bytes = key.encode("utf-8")
+	key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32]) # properly encodes and lengthens or shortenes the input string to be used as a key 
+	f = Fernet(key)
+	return f.decrypt(message)
+def encrypting(key,message):
+	code_bytes = key.encode("utf-8")
+	key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32]) # properly encodes and lengthens or shortenes the input string to be used as a key 
+	f = Fernet(key)
+	return f.encrypt(message.encode("utf-8"))
+
+#use the above with lamdas for ultimate street cred | f = lambda key, message : encrypting(key,message)
+
 def getcombination():
-	return extrahelpers.getcombination(getip())
+	f = lambda key, message : decrypting(key,message)
+	key = getip()
+	return [[str(f(str(key),a))[2:-1] for a in message] for message in extrahelpers.getcombination(getip())]
+	#return extrahelpers.getcombination(getip()
 
 def writecombination(inputinfo):
-	return extrahelpers.writecombination(inputinfo,getip())
+	print(inputinfo)
+	for message in inputinfo:
+		print(message)
+
+	f = lambda key, message : encrypting(key,message)
+	key = getip()
+	a = [[f(str(key),a) for a in message] for message in inputinfo]
+	#return extrahelpers.writecombination(inputinfo,getip())
+	return extrahelpers.writecombination(a,getip())
 
 def deletecombination():
 	return extrahelpers.deletecombination(getip())
@@ -82,6 +127,8 @@ def getip():
 #results page, this controls the results page, its forms and the like, loaded information however still from other url 
 @app.route("/results",methods=['GET','POST'])
 def results():
+	writtenstuff = False
+	nowrittenstuff = False
 	if request.method == 'POST':
 		if request.form.get("return") == "return":
 			printdev("returned button2")
@@ -100,8 +147,36 @@ def results():
 				printdev("textbox = " + str(text))
 			printdev("checkboxes =" + str(checkboxes))
 			printdev("textboxes =" + str(textboxes))
+			combinations = getcombination()
+			interestsforwrite = []
+			intereststotal = []
+			for d in range(combinations):
+				if checkboxes[d] == True:
+					interestsforwrite.append(combinations[d][1])
+				intereststotal.append(combinations[d][1])
+			writtentoo = getwrittentoo()
+			for a in range(interestsforwrite):
+				if interestsforwrite[a] == writtentoo:
+					checkboxes[intereststotal.index(interestsforwrite[a])] = False
+
+			interestsforwrite = []
+			for d in range(combinations):
+				if checkboxes[d] == True:
+					interestsforwrite.append(combinations[d][1])
+			printdev("interests to be rewritten = " + str(interestsforwrite) + " , checkboxes are now" + str(checkboxes))
+			writewrittentoo(interestsforwrite)
+
 			#extrahelpers.addandinfoloop(extrahelpers.combination,checkboxes,textboxes)
 			extrahelpers.addandinfoloop(getcombination(),checkboxes,textboxes)
+			writtenstuff = False
+			nowrittenstuff = True
+			for x in checkboxes: 
+				if x == True:
+					writtenstuff = True
+					nowrittenstuff = False
+			
+
+				
 	else:
 		printdev("elsed button")
 		
@@ -169,7 +244,7 @@ def results():
 		extrare.append(' ;\n '.join(a))
 	printdev(extrare)
 	#return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
-	return render_template("results.html",name="resultsname", len = len(getcombination()), combinations = getcombination(), interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
+	return render_template("results.html",name="resultsname", len = len(getcombination()), combinations = getcombination(), interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor, success = writtenstuff, failure = nowrittenstuff)
 
 
 #api page for the results page, not for viewers really just used for json return 

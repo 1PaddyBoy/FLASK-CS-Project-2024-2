@@ -13,7 +13,16 @@
             <p>This page will give further information on each of the interests you entered. On the left, under some basic information on the popularity of the interest, you can click the check box to be added to the amount of people recorded to have that interest. Once you do a textbox will open up where you can enter information to be added for anyone with your interest to see.</p>
           </div>
       </div>
+      <div>
+        {% if success %}
+          <p style = "background-color:green;"> successfully wrote interests</p>
+        {% endif%}
 
+        {% if failure %}
+          <p  style ="background-color:red;">no interests written to</pp>
+        {% endif%}
+        
+      </div>
       <div class ="row">
         <div class="column" style = "width: 50%;"> <h3>Here are all of your interests, check the check boxes to add your information on the topic </h3> 
           <ol>
