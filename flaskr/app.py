@@ -12,7 +12,7 @@ import base64
 import socket
 import sys
 
-devcodes = False # this prints everything to the terminal if you want to it. 
+devcodes = True # this prints everything to the terminal if you want to it. 
 def printdev(toprint): # function to control whether stuff is printed to terminal 
 	if devcodes:
 		print(toprint)
@@ -134,6 +134,7 @@ def results():
 			printdev("returned button2")
 			return redirect("/")
 		else:
+			printdev("stuff happens")
 			checkboxes = []
 			textboxes = []
 			printdev(request.form)
@@ -150,17 +151,20 @@ def results():
 			combinations = getcombination()
 			interestsforwrite = []
 			intereststotal = []
-			for d in range(combinations):
+			for d in range(len(combinations)):
 				if checkboxes[d] == True:
 					interestsforwrite.append(combinations[d][1])
 				intereststotal.append(combinations[d][1])
 			writtentoo = getwrittentoo()
-			for a in range(interestsforwrite):
-				if interestsforwrite[a] == writtentoo:
+			printdev("interestsforwrite =" + str(interestsforwrite))
+			printdev(writtentoo)
+			for a in range(len(interestsforwrite)):
+				if interestsforwrite[a] in writtentoo:
 					checkboxes[intereststotal.index(interestsforwrite[a])] = False
+					printdev("interest " + str(interestsforwrite[a]) +"already done")
 
 			interestsforwrite = []
-			for d in range(combinations):
+			for d in range(len(combinations)):
 				if checkboxes[d] == True:
 					interestsforwrite.append(combinations[d][1])
 			printdev("interests to be rewritten = " + str(interestsforwrite) + " , checkboxes are now" + str(checkboxes))
