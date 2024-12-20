@@ -58,7 +58,10 @@ def encrypting(key,message):
 def getcombination():
 	f = lambda key, message : decrypting(key,message)
 	key = getip()
-	return [[str(f(str(key),a))[2:-1] for a in message] for message in extrahelpers.getcombination(getip())]
+	try:
+		return [[str(f(str(key),a))[2:-1] for a in message] for message in extrahelpers.getcombination(getip())]
+	except:
+		return []
 	#return extrahelpers.getcombination(getip()
 
 def writecombination(inputinfo):
