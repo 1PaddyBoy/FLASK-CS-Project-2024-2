@@ -127,6 +127,13 @@ def getip():
 		a = request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
 	return [request.environ['REMOTE_ADDR'], request.environ.get('HTTP_X_REAL_IP', request.remote_addr), a]
 
+
+@app.route("/clubs", methods=['GET','POST'])
+def clubs():
+	print("in function")
+	return render_template("clubs.html",name = "clubspage")
+
+
 #results page, this controls the results page, its forms and the like, loaded information however still from other url 
 @app.route("/results",methods=['GET','POST'])
 def results():
