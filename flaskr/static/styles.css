@@ -205,3 +205,14 @@ transform: rotate(315deg);
   width:105%;
   background:lightblue;  
 }
+
+
+tr:nth-child(even) {
+  background-color: #D6EEEE;
+}
+
+tr {
+  border-bottom: 1px solid black;
+}
+
+tr:hover {background-color: #eed6d6;}

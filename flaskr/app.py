@@ -130,9 +130,14 @@ def getip():
 
 @app.route("/clubs", methods=['GET','POST'])
 def clubs():
+	if request.method == 'POST':
+		if request.form.get("return") == "return":
+			printdev("returned button2")
+			return redirect("/")
+		
 	print("in function")
 	return render_template("clubs.html",name = "clubspage")
-
+	
 
 #results page, this controls the results page, its forms and the like, loaded information however still from other url 
 @app.route("/results",methods=['GET','POST'])
@@ -143,6 +148,9 @@ def results():
 		if request.form.get("return") == "return":
 			printdev("returned button2")
 			return redirect("/")
+		elif request.form.get("clubs") == "clubs":
+			printdev("clubs button3")
+			return redirect("/clubs")
 		else:
 			printdev("stuff happens")
 			checkboxes = []
