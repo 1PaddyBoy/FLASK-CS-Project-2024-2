@@ -11,6 +11,7 @@ from cryptography.fernet import Fernet
 import base64
 import socket
 import sys
+import random
 
 devcodes = True # this prints everything to the terminal if you want to it. 
 def printdev(toprint): # function to control whether stuff is printed to terminal 
@@ -142,6 +143,7 @@ def clubs():
 #results page, this controls the results page, its forms and the like, loaded information however still from other url 
 @app.route("/results",methods=['GET','POST'])
 def results():
+	bullshit = ""
 	writtenstuff = False
 	nowrittenstuff = False
 	if request.method == 'POST':
@@ -260,13 +262,30 @@ def results():
 	printdev("extrastuffs")
 	printdev(extra)
 	
+	dir_list = os.listdir("static//data")
+	
+	for i in range(40):
+		file = open("static\\data\\" + random.choice(dir_list),"r")
+		#lines = list(csv.reader(file,))
+		newlist = []
+		for a in list((csv.reader(file,))):
+			if len(a) >= 1:
+				newlist.append(str(a[0]))
+		print(newlist)
+		bullshit += str("\n".join(newlist))
+		#bullshit = ""
+		#for a in newlist:
+		#	bullshit += str(a) + "\n"
+		file.close()
+	print("bullshit =" + str(bullshit))
+
 	printdev(extrare)
 	extrare = []
 	for a in extra:
 		extrare.append(' ;\n '.join(a))
 	printdev(extrare)
 	#return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
-	return render_template("results.html",name="resultsname", len = len(getcombination()), combinations = getcombination(), interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor, success = writtenstuff, failure = nowrittenstuff)
+	return render_template("results.html",name="resultsname", len = len(getcombination()), combinations = getcombination(), interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor, success = writtenstuff, failure = nowrittenstuff, stuff = bullshit)
 
 
 #api page for the results page, not for viewers really just used for json return 

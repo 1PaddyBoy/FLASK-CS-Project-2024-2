@@ -216,3 +216,50 @@ tr {
 }
 
 tr:hover {background-color: #eed6d6;}
+
+
+#scroll-container {
+  border: 3px solid black;
+  border-radius: 5px;
+  height: 100px;
+  overflow: hidden;
+}
+
+#scroll-text {
+  height: 100%;
+  text-align: center;
+  
+  /* animation properties */
+  -moz-transform: translateY(100%);
+  -webkit-transform: translateY(100%);
+  transform: translateY(100%);
+  
+  -moz-animation: my-animation 10s linear infinite;
+  -webkit-animation: my-animation 10s linear infinite;
+  animation: my-animation 10s linear infinite;
+}
+
+/* for Firefox */
+@-moz-keyframes my-animation {
+  from { -moz-transform: translateY(200%); }
+  to { -moz-transform: translateY(-200%); }
+}
+
+/* for Chrome */
+@-webkit-keyframes my-animation {
+  from { -webkit-transform: translateY(200%); }
+  to { -webkit-transform: translateY(-200%); }
+}
+
+@keyframes my-animation {
+  from {
+    -moz-transform: translateY(200%);
+    -webkit-transform: translateY(200%);
+    transform: translateY(200%);
+  }
+  to {
+    -moz-transform: translateY(-200%);
+    -webkit-transform: translateY(-200%);
+    transform: translateY(-200%);
+  }
+}
