@@ -261,8 +261,27 @@ def results():
 	extrare = []
 	printdev("extrastuffs")
 	printdev(extra)
-	
-	dir_list = os.listdir("static//data")
+	cwd = os.getcwd()
+	print("file thing = " + str(cwd))
+	try:
+		dir_list = os.listdir("/mysite/static/data")
+		print("mysite static data")
+	except:
+		try:
+			dir_list = os.listdir("/static/data")
+			print("static data")
+		except:
+			try:
+				dir_list = os.listdir("/static/")
+				print("static")
+			except:
+				try:
+					dir_list = os.listdir("/data/")
+				except:
+					try:
+						dir_list = os.listdir(str(cwd) + "/static/data/")
+					except:		
+						print("none")
 	
 	for i in range(40):
 		file = open("static\\data\\" + random.choice(dir_list),"r")
