@@ -4,6 +4,7 @@
 <link rel=stylesheet type=text/css href="{{ url_for('static' , filename= 'styles.css') }}">
 <body>
 <h1>Welcome to the CS interest board</h1>
+<p>input your interests and the catagories they are in below like, Catagory: "food" ; Interest:"spaghetti", for your favorite food to be entered as spaghetti \n then hit submit and view results</p>
 
 
 
@@ -12,7 +13,7 @@
 	<div class= "column" style = "width: 50%;">
 		<button class="collapsible">More information</button>
 		<div class="content">
-			<p>This website will compare your entered interests anonymously with the servers database. Then if you choose data can be recorded to add and you can see messages others have left encrypted just for those with your interest. All data is securely held</p>
+			<p>This website will compare your entered interests anonymously with the servers database. Then if you choose data can be recorded to add and you can see messages others have left encrypted just for those with your interest. All data is securely held. \n Input your interests in the boxes below. hit submit to save them. by submitting and reentering you can submit as many interests as you like</p>
 		</div>
 	</div>
 	
@@ -39,7 +40,7 @@
 
 	</div>
 	<form method="POST">
-	<div class="column" style = "width: 33.33%;"> <h3>Category</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3>Category,(no "favorite" necessary) ie "movie"</h3> 
 
 		
     		<textarea name = "textareaa1"></textarea>
@@ -54,7 +55,7 @@
 		
 
 	</div>
-	<div class="column" style = "width: 33.33%;"> <h3>Interest</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3>Interest, ie. "Forest Gump"</h3> 
 		
 			
     			<textarea name = "textareaa2"></textarea>
@@ -72,14 +73,14 @@
 
 
 	</div>
-	<input type="submit" name = 'submit' value="Submit" id = "submitbutton">
+	<input type="submit" name = 'submit interests' value="Submit" id = "submitbutton">
 	</form>
 </div>
   
 <br>
 <br>
 <form method = "POST">
-	<input type = "submit" name = "results" value = "results" id = "results button">
+	<input type = "submit" name = "view results" value = "results" id = "results button">
 </form>
 <br>
 <br>
