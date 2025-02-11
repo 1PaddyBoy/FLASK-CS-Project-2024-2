@@ -1,17 +1,33 @@
+.light-mode {
+  background-color: white;
+  color: black;
+
+
+}
+.fancy-color{
+  color: lightblue;
+  color: lightblue;
+}
 h1{
-	color: lightblue;
+	
+}
+p{
+
+  
+}
+h2{
+
 }
 
-h2{
-	color: lightblue;
-}
 
 body{
 	background-color: black;
+  color:white;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 ol{
-  color:white
+  
 }
 
 .column {

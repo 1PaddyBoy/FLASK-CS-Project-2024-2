@@ -3,9 +3,9 @@
 <title>CS project 2024</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static' , filename= 'styles.css') }}">
 <body>
-<h1>Welcome to the CS interest board</h1>
-<p>input your interests and the catagories they are in below like, Catagory: "food" ; Interest:"spaghetti", for your favorite food to be entered as spaghetti \n then hit submit and view results</p>
-
+<h1 style="text-align:center;" class = "fancy-color">Welcome to the CS interest board</h1>
+<p >Input your interests and the catagories they are in below like, Catagory: "food" ; Interest:"spaghetti", for your favorite food to be entered as spaghetti \n then hit submit and view results</p>
+<button onclick="myFunction()">toggle lightmode</button>
 
 
 
@@ -30,7 +30,7 @@
 <br>
 
 <div class ="row">
-	<div class="column" style = "width: 33.33%;"> <h3>Interest Number</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3 class="fancy-color">Interest Number</h3> 
 		<h2> 1.</h2>
 		<h2> 2.</h2>
 		<h2> 3.</h2>
@@ -40,7 +40,7 @@
 
 	</div>
 	<form method="POST">
-	<div class="column" style = "width: 33.33%;"> <h3>Category,(no "favorite" necessary) ie "movie"</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3 class = "fancy-color">Category,(no "favorite" necessary) ie "movie"</h3> 
 
 		
     		<textarea name = "textareaa1" placeholder="movie"></textarea>
@@ -55,7 +55,7 @@
 		
 
 	</div>
-	<div class="column" style = "width: 33.33%;"> <h3>Interest, ie. "Forest Gump"</h3> 
+	<div class="column" style = "width: 33.33%;"> <h3 class="fancy-color">Interest, ie. "Forest Gump"</h3> 
 		
 			
     			<textarea name = "textareaa2" placeholder="Forest Gump"></textarea>
@@ -80,16 +80,16 @@
 <br>
 <br>
 <form method = "POST">
-	<input type = "submit" name = "view results" value = "results" id = "results button">
+	<input type = "submit" name = "results" value = "view results" id = "results">
 </form>
 <br>
 <br>
 <br>
 <div style="background-color:rgb(50, 50, 50)">
-<h3 style="color:white">Made by Patrick Longman for Advanced Computing Class</h3>
-<h4 style="color:white">Powered by Patrick Longman and his brain</h4>
-<h5 style="color:lightgrey">Intellegence, blood and grit thats it</h5>
-<h6 style="color:lightgrey">don't ask who's blood</h6>
+<h3 >Made by Patrick Longman for Advanced Computing Class</h3>
+<h4 >Powered by Patrick Longman and his brain</h4>
+<h5 >Intellegence, blood and grit thats it</h5>
+<h6 >don't ask who's blood</h6>
 </div>
 
 <script> // I kept the javascript to a minimum for many reasons but this was easiest sooo
@@ -180,6 +180,11 @@
 	});
 
 	getStatus();
+	function myFunction() {
+		var element = document.body;
+		element.classList.toggle("light-mode");
+		
+	}
 	
 </script>
 

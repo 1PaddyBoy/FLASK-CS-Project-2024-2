@@ -12,6 +12,54 @@ import base64
 import socket
 import sys
 import random
+import json
+import os
+import sqlite3
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
+
+
+
+from flask import Flask, redirect, request, url_for
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+from oauthlib.oauth2 import WebApplicationClient
+import requests
+from db import init_db_command
+from user import User
+
+app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
+# User session management setup
+# https://flask-login.readthedocs.io/en/latest
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# Naive database setup
+try:
+    init_db_command()
+except sqlite3.OperationalError:
+    # Assume it's already been created
+    pass
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+
+
+
+
+
+
 
 devcodes = True # this prints everything to the terminal if you want to it. 
 def printdev(toprint): # function to control whether stuff is printed to terminal 
@@ -117,8 +165,8 @@ def hello():
 			return redirect("/results")
 
 		else:
-			printdev("bad input in html submit post \\, will pretend like nothing happened")
-	return render_template('entry.html',name="testername")	
+			printdev("bad input in html submit post \\, will pretend like nothing happened, " + str(request.form))
+	return render_template('entry.html',name="testername", authentication = current_user.is_authenticated)	
 	#return "Hello World!"
 
 def getip():
