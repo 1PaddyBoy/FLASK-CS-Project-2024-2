@@ -35,6 +35,7 @@ from db import init_db_command
 
 # Third party libraries
 from flask import Flask, redirect, request, url_for
+#import flask_login
 from flask_login import (
     LoginManager,
     current_user,
@@ -85,20 +86,57 @@ def load_user(user_id):
     return User.get(user_id)
 
 
-#@app.route("/")
-#def index():
- #   if current_user.is_authenticated:
-  #      return (
-   #         "<p>Hello, {}! You're logged in! Email: {}</p>"
-    #        "<div><p>Google Profile Picture:</p>"
-     #       '<img src="{}" alt="Google profile pic"></img></div>'
-      #      '<a class="button" href="/logout">Logout</a>'.format(
-       #         current_user.name, current_user.email, current_user.profile_pic
-        #    )
-        #)
-	#current_user.name, current_user.email, current_user.profile_pic)
-    #else:
-     #   return '<a class="button" href="/login">Google Login</a>'
+@app.route("/")
+def index():
+
+	print("test1")
+	extrahelpers.printer()
+	if request.method == 'POST':
+		#download()
+		if 'submit' in request.form:
+			pos = [2,5] # change these variables to change how many boxes it checks 
+			text = [['' for _ in range(pos[0])] for _ in range(pos[1])] 
+			for a in range(len(text)):
+				for b in range(len(text[a])):
+					printdev('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1))
+					printdev(request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)))
+					text[a][b] = request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)).lower()
+			printdev(text)
+			removers = []
+			for a in text:
+				if len(a) < 2 or (a[0] == '') or (a[1] == ''):
+					printdev("popping, index = " + str(text.index(a)) + " value was "+ str(a) + " reason " + str([len(a) < 2,(a[0] == ''),a[1] == ''])) 
+					removers.append(a)
+			text = extrahelpers.remove(text,removers)
+			
+			printdev("new combinations to be added =" + str(text))
+			#extrahelpers.combination.extend(text)
+			writecombination(text)
+			#extrahelpers.writecombination(text,getip())
+			extra.append("test " + str(text) + "endtest                                          test test test test test test test test test test test test test test test")
+			printdev(getcombination())
+		elif 'results' in request.form:
+			#this does the results button
+			printdev("results")
+			print(getip())
+			return redirect("/results")
+
+		else:
+			printdev("bad input in html submit post \\, will pretend like nothing happened, " + str(request.form))
+	return render_template('entry.html',name="testername", authentication = current_user.is_authenticated)	
+
+	if current_user.is_authenticated:
+		return (
+    		"<p>Hello, {}! You're logged in! Email: {}</p>"
+			"<div><p>Google Profile Picture:</p>"
+    		'<img src="{}" alt="Google profile pic"></img></div>'
+    		'<a class="button" href="/logout">Logout</a>'.format(
+                current_user.name, current_user.email, current_user.profile_pic
+            )
+		)
+		#current_user.name, current_user.email, current_user.profile_pic
+	else:
+		return '<a class="button" href="/login">Google Login</a>'
 
 
 @app.route("/login")
@@ -121,7 +159,6 @@ def login():
 def callback():
     # Get authorization code Google sent back to you
     code = request.args.get("code")
-
     # Find out what URL to hit to get tokens that allow you to ask for
     # things on behalf of a user
     google_provider_cfg = get_google_provider_cfg()
@@ -180,7 +217,6 @@ def callback():
 
 
 @app.route("/logout")
-@login_required
 def logout():
     logout_user()
     return redirect(url_for("index"))
@@ -190,8 +226,9 @@ def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
 
-#if __name__ == "__main__":
- #   app.run(ssl_context="adhoc")
+if __name__ == "__main__":
+	app.run(ssl_context="adhoc")
+	print("test1")
 
 
 
@@ -282,8 +319,9 @@ extra=[] #holds extra information between functions, not that necessary
 
 #main routing for main page, controls the textboxes and submit button as well. 
 
-@app.route("/", methods=['GET','POST'])
+#@app.route("/", methods=['GET','POST'])
 def hello():
+	print("test1")
 	extrahelpers.printer()
 	if request.method == 'POST':
 		#download()
@@ -549,5 +587,5 @@ def getStatus():
 
 
 #runs main function if run as main file and not as module like with flask. 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+ #   main()

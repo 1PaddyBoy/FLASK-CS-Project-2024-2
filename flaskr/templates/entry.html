@@ -14,9 +14,11 @@
 <p>Hello, {}! You're logged in! Email: {}</p>
             <div><p>Google Profile Picture:</p>
             <img src="{}" alt="Google profile pic"></img></div>
-            <a class="button" href="/logout">Logout</a>'
+            <a class="button" href="/logout">Logout</a>
                 
-{%end if%}
+{%else%}
+	<a class="button" href="/login">Google Login</a>
+{%endif%}
 
 
 
