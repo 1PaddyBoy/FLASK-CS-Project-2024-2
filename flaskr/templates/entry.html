@@ -10,10 +10,10 @@
 
 
 
-{% if success %}
-<p>Hello, {}! You're logged in! Email: {}</p>
+{% if authentication %}
+<p>Hello, {{name2}} You're logged in! Email: {{email}}</p>
             <div><p>Google Profile Picture:</p>
-            <img src="{}" alt="Google profile pic"></img></div>
+            <img src="{{image}}" alt="Google profile pic"></img></div>
             <a class="button" href="/logout">Logout</a>
                 
 {%else%}

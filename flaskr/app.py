@@ -123,7 +123,11 @@ def index():
 
 		else:
 			printdev("bad input in html submit post \\, will pretend like nothing happened, " + str(request.form))
-	return render_template('entry.html',name="testername", authentication = current_user.is_authenticated)	
+	try:
+		return render_template('entry.html',name="testername", authentication = current_user.is_authenticated, name2 = current_user.name, email = current_user.email,image = current_user.profile_pic)	
+	except:
+		return render_template('entry.html',name="testername", authentication = current_user.is_authenticated)
+
 
 	if current_user.is_authenticated:
 		return (
