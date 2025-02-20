@@ -45,7 +45,7 @@
                 
                 <p>&#9; {{peoplelist[a]}} other people have your interest, this was the {{ popularitylist[a][0]}} most popular response out of {{popularitylist[a][1]}} interests within this catagory</p>
                 <input type="checkbox" id={{ "insert" + a|string }} name={{ "interest" + (a+1)|string }} value="check" onclick="dynInput(this); ">
-                <label for = {{ "insert" + a|string }}>record for this interest? {{a + 1}} ? </label>
+                <label for = {{ "insert" + a|string }}>record for interest: "{{(interests[a])|string}}" ? </label>
                 <div id={{"insertinputsinterest" + (a+1)|string }} ></div>
                 <br>
               {%endfor%}

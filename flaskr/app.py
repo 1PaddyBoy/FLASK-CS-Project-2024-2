@@ -48,6 +48,7 @@ from user import User
 
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+print(GOOGLE_CLIENT_ID)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
@@ -79,6 +80,18 @@ except sqlite3.OperationalError:
 # OAuth2 client setup
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
+devcodes = True # this prints everything to the terminal if you want to it. 
+def printdev(toprint): # function to control whether stuff is printed to terminal 
+	if devcodes:
+		print(toprint)
+
+def getip():
+	if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+		a = request.environ['REMOTE_ADDR']
+	else:
+		a = request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
+	return [request.environ['REMOTE_ADDR'], request.environ.get('HTTP_X_REAL_IP', request.remote_addr), a]
+
 
 # Flask-Login helper to retrieve a user from our db
 @login_manager.user_loader
@@ -86,20 +99,20 @@ def load_user(user_id):
     return User.get(user_id)
 
 
-@app.route("/")
+@app.route("/",methods=['GET', 'POST'])
 def index():
 
-	print("test1")
+	print("test12")
 	extrahelpers.printer()
 	if request.method == 'POST':
 		#download()
-		if 'submit' in request.form:
+		if 'Submit' in request.form or 'submit interests' in request.form:
 			pos = [2,5] # change these variables to change how many boxes it checks 
 			text = [['' for _ in range(pos[0])] for _ in range(pos[1])] 
 			for a in range(len(text)):
 				for b in range(len(text[a])):
 					printdev('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1))
-					printdev(request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)))
+					print(request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)))
 					text[a][b] = request.form.get('textarea' + str(extrahelpers.alphabet[a]) + str(b + 1)).lower()
 			printdev(text)
 			removers = []
@@ -108,7 +121,7 @@ def index():
 					printdev("popping, index = " + str(text.index(a)) + " value was "+ str(a) + " reason " + str([len(a) < 2,(a[0] == ''),a[1] == ''])) 
 					removers.append(a)
 			text = extrahelpers.remove(text,removers)
-			
+			print("new combinations to be added =" + str(text))
 			printdev("new combinations to be added =" + str(text))
 			#extrahelpers.combination.extend(text)
 			writecombination(text)
@@ -230,9 +243,6 @@ def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
 
-if __name__ == "__main__":
-	app.run()
-	print("test1")
 
 
 
@@ -253,10 +263,8 @@ if __name__ == "__main__":
 
 
 
-devcodes = True # this prints everything to the terminal if you want to it. 
-def printdev(toprint): # function to control whether stuff is printed to terminal 
-	if devcodes:
-		print(toprint)
+
+
 #custom modules and custom path check, all dev
 for path in sys.path:
 		printdev(path)
@@ -325,7 +333,7 @@ extra=[] #holds extra information between functions, not that necessary
 
 #@app.route("/", methods=['GET','POST'])
 def hello():
-	print("test1")
+	print("test123")
 	extrahelpers.printer()
 	if request.method == 'POST':
 		#download()
@@ -362,12 +370,6 @@ def hello():
 	return render_template('entry.html',name="testername", authentication = current_user.is_authenticated)	
 	#return "Hello World!"
 
-def getip():
-	if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-		a = request.environ['REMOTE_ADDR']
-	else:
-		a = request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
-	return [request.environ['REMOTE_ADDR'], request.environ.get('HTTP_X_REAL_IP', request.remote_addr), a]
 
 
 @app.route("/clubs", methods=['GET','POST'])
@@ -544,6 +546,8 @@ def results():
 	for a in extra:
 		extrare.append(' ;\n '.join(a))
 	printdev(extrare)
+	print("stuffs")
+	print(getcombination())
 	#return render_template("results.html",name="resultsname", len = len(extrahelpers.combination), combinations = extrahelpers.combination, interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor)
 	return render_template("results.html",name="resultsname", len = len(getcombination()), combinations = getcombination(), interests = interestsa, catagories = catagoriesa,extraa = extrare, peoplelist = people, popularitylist = peoplefor, success = writtenstuff, failure = nowrittenstuff, stuff = bullshit)
 
@@ -589,7 +593,9 @@ def getStatus():
 	statusList = {'status':extrahelpers.popularityWhole}
 	return json.dumps(statusList)
 
-
+if __name__ == "__main__":
+	app.run()
+	print("test1")
 #runs main function if run as main file and not as module like with flask. 
 #if __name__ == "__main__":
  #   main()
