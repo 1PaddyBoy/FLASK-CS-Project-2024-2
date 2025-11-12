@@ -1,8 +1,9 @@
 # FLASK-CS-Project-2024
  real CS project 2024 
 
-created 11-23-24 this project is my submission for the advanced computing Princeton day school project. 
-
+created 11-23-24 this project is my submission for the advanced computing Princeton Day School project. 
+This project is a webbased secure communications channel that stores and distrobuted information based off inputs to securely connect information. 
+Made to connect school clubs, forums etc with a secure background platform.
 
 important files to check for code are as follows from this directory: 
 
